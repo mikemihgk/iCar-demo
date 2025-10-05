@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iCar - Audi Q2</title>
+  <title>iCar - Audi SQ2</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -42,7 +42,7 @@
       background-color: #0056b3;
     }
 
-    input {
+    input, select {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
@@ -88,13 +88,49 @@
       color: green;
       font-weight: bold;
     }
+
+    .vehicle-section {
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>iCar</h1>
-    <img src="https://i.ibb.co/4p7J2Qd/audi-q2-grey.png" alt="Audi Q2" class="car-image">
-    <h2>Audi Q2 1.0 TFSI - 2021</h2>
+    <img id="carImage" src="https://i.ibb.co/0jZ3QbY/audi-sq2-grey.png" alt="Audi SQ2 Grey" class="car-image">
+    <h2 id="carDetails">Audi SQ2 - 2023</h2>
+
+    <div class="vehicle-section">
+      <h3>Επιλογή Οχήματος</h3>
+      
+      <label for="brand">Μάρκα:</label>
+      <select id="brand" onchange="updateVehicle()">
+        <option value="Audi">Audi</option>
+        <option value="BMW">BMW</option>
+        <option value="Mercedes">Mercedes</option>
+        <option value="Toyota">Toyota</option>
+        <option value="Volkswagen">Volkswagen</option>
+      </select>
+
+      <label for="model">Μοντέλο:</label>
+      <select id="model" onchange="updateVehicle()">
+        <option value="SQ2">SQ2</option>
+        <option value="Q2">Q2</option>
+        <option value="A3">A3</option>
+        <option value="X3">X3</option>
+        <option value="C-Class">C-Class</option>
+        <option value="Corolla">Corolla</option>
+        <option value="Golf">Golf</option>
+      </select>
+
+      <label for="year">Χρονολογία:</label>
+      <input type="number" id="year" value="2023" min="2000" max="2030" onchange="updateVehicle()">
+
+      <label for="engine">Μηχανή (π.χ. 2.0 TFSI):</label>
+      <input type="text" id="engine" value="2.0 TFSI" onchange="updateVehicle()">
+    </div>
 
     <label for="lastServiceDate">Ημερομηνία Τελευταίου Service:</label>
     <input type="date" id="lastServiceDate" value="2025-01-01">
@@ -114,18 +150,87 @@
     <button onclick="updateService()">Ενημέρωση Service</button>
     
     <ul id="serviceList">
-      <li data-task="Λάδια κινητήρα" data-km="15000" data-months="12" data-last="2025-01-01"></li>
-      <li data-task="Φίλτρο αέρα" data-km="30000" data-months="24" data-last="2025-01-01"></li>
+      <!-- Η λίστα θα ενημερωθεί δυναμικά βάσει μοντέλου -->
+      <li data-task="Λάδια κινητήρα" data-km="20000" data-months="12" data-last="2025-01-01"></li>
+      <li data-task="Φίλτρο αέρα" data-km="40000" data-months="24" data-last="2025-01-01"></li>
       <li data-task="Φίλτρο καμπίνας" data-km="30000" data-months="24" data-last="2025-01-01"></li>
-      <li data-task="Μπουζί" data-km="60000" data-months="48" data-last="2025-01-01"></li>
-      <li data-task="ΚΤΕΟ" data-km="0" data-months="24" data-last="2025-01-01"></li> <!-- Χρησιμοποιεί kteoDate -->
-      <li data-task="Ασφάλεια" data-km="0" data-months="12" data-last="2025-01-01"></li> <!-- Χρησιμοποιεί insuranceDate -->
+      <li data-task="Μπουζί" data-km="80000" data-months="48" data-last="2025-01-01"></li>
+      <li data-task="ΚΤΕΟ" data-km="0" data-months="24" data-last="2025-01-01"></li>
+      <li data-task="Ασφάλεια" data-km="0" data-months="12" data-last="2025-01-01"></li>
     </ul>
 
     <p class="signature">Developed by Mike</p>
   </div>
 
   <script>
+    // Preset δεδομένα service intervals ανά μοντέλο (μπορείς να προσθέσεις περισσότερα)
+    const servicePresets = {
+      'Audi SQ2': {
+        oil: { km: 20000, months: 12 },
+        airFilter: { km: 40000, months: 24 },
+        cabinFilter: { km: 30000, months: 24 },
+        sparkPlugs: { km: 80000, months: 48 }
+      },
+      'Audi Q2': {
+        oil: { km: 15000, months: 12 },
+        airFilter: { km: 30000, months: 24 },
+        cabinFilter: { km: 30000, months: 24 },
+        sparkPlugs: { km: 60000, months: 48 }
+      },
+      'BMW X3': {
+        oil: { km: 18000, months: 12 },
+        airFilter: { km: 35000, months: 24 },
+        cabinFilter: { km: 25000, months: 24 },
+        sparkPlugs: { km: 70000, months: 48 }
+      },
+      // Προσθήκη περισσότερων μοντέλων εδώ...
+      'default': {
+        oil: { km: 15000, months: 12 },
+        airFilter: { km: 30000, months: 24 },
+        cabinFilter: { km: 30000, months: 24 },
+        sparkPlugs: { km: 60000, months: 48 }
+      }
+    };
+
+    // Ενημέρωση εικόνας και header βάσει επιλογής
+    function updateVehicle() {
+      const brand = document.getElementById('brand').value;
+      const model = document.getElementById('model').value;
+      const year = document.getElementById('year').value;
+      const engine = document.getElementById('engine').value;
+
+      // Ενημέρωση header
+      document.getElementById('carDetails').textContent = `${brand} ${model} ${engine} - ${year}`;
+
+      // Αλλαγή εικόνας (προσάρμοσε URLs για άλλα μοντέλα)
+      let imageUrl = 'https://i.ibb.co/0jZ3QbY/audi-sq2-grey.png'; // Default SQ2 γκρι
+      if (model === 'Q2') {
+        imageUrl = 'https://i.ibb.co/4p7J2Qd/audi-q2-grey.png'; // Q2 από πριν
+      } else if (model === 'X3') {
+        imageUrl = 'https://i.ibb.co/placeholder/bmw-x3-grey.png'; // Placeholder - βάλε real URL
+      }
+      // Για άλλα, βάλε URLs από imgur/ibb.co
+      document.getElementById('carImage').src = imageUrl;
+      document.getElementById('carImage').alt = `${brand} ${model} Grey`;
+
+      // Ενημέρωση service intervals βάσει μοντέλου
+      const fullModel = `${brand} ${model}`;
+      const presets = servicePresets[fullModel] || servicePresets['default'];
+
+      const items = document.querySelectorAll('#serviceList li');
+      items[0].setAttribute('data-km', presets.oil.km);
+      items[0].setAttribute('data-months', presets.oil.months);
+      items[1].setAttribute('data-km', presets.airFilter.km);
+      items[1].setAttribute('data-months', presets.airFilter.months);
+      items[2].setAttribute('data-km', presets.cabinFilter.km);
+      items[2].setAttribute('data-months', presets.cabinFilter.months);
+      items[3].setAttribute('data-km', presets.sparkPlugs.km);
+      items[3].setAttribute('data-months', presets.sparkPlugs.months);
+
+      // Αποθήκευση vehicle data
+      localStorage.setItem('vehicleData', JSON.stringify({ brand, model, year, engine }));
+    }
+
     function updateService() {
       let lastDateStr = document.getElementById('lastServiceDate').value || '2025-01-01';
       let currentKm = parseInt(document.getElementById('currentKm').value) || 0;
@@ -205,15 +310,26 @@
 
     // Φόρτωση αποθηκευμένων δεδομένων στην αρχή
     window.onload = function() {
-      let saved = localStorage.getItem('carData');
-      if (saved) {
-        let data = JSON.parse(saved);
+      let savedCar = localStorage.getItem('carData');
+      if (savedCar) {
+        let data = JSON.parse(savedCar);
         document.getElementById('lastServiceDate').value = data.lastServiceDate || '2025-01-01';
         document.getElementById('currentKm').value = data.currentKm || 10000;
         document.getElementById('monthlyKm').value = data.monthlyKm || 1000;
         document.getElementById('insuranceDate').value = data.insuranceDate || '2025-10-05';
         document.getElementById('kteoDate').value = data.kteoDate || '2027-01-01';
       }
+
+      let savedVehicle = localStorage.getItem('vehicleData');
+      if (savedVehicle) {
+        let data = JSON.parse(savedVehicle);
+        document.getElementById('brand').value = data.brand || 'Audi';
+        document.getElementById('model').value = data.model || 'SQ2';
+        document.getElementById('year').value = data.year || 2023;
+        document.getElementById('engine').value = data.engine || '2.0 TFSI';
+      }
+
+      updateVehicle(); // Αρχική ενημέρωση οχήματος
       updateService(); // Αυτόματο update στην αρχή
 
       // Ζήτα άδεια για notifications (προαιρετικά)
