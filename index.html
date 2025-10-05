@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyCarCare - Audi Q2</title>
+  <title>iCar - Audi Q2</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -83,11 +83,16 @@
       color: red;
       font-weight: bold;
     }
+
+    .info {
+      color: green;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>MyCarCare</h1>
+    <h1>iCar</h1>
     <img src="https://i.ibb.co/4p7J2Qd/audi-q2-grey.png" alt="Audi Q2" class="car-image">
     <h2>Audi Q2 1.0 TFSI - 2021</h2>
 
@@ -100,6 +105,12 @@
     <label for="monthlyKm">Περίπου Km/Μήνα:</label>
     <input type="number" id="monthlyKm" value="1000" min="0">
 
+    <label for="insuranceDate">Ημερομηνία Λήξης Ασφάλειας:</label>
+    <input type="date" id="insuranceDate" value="2025-10-05">
+
+    <label for="kteoDate">Ημερομηνία Επόμενου ΚΤΕΟ:</label>
+    <input type="date" id="kteoDate" value="2027-01-01">
+
     <button onclick="updateService()">Ενημέρωση Service</button>
     
     <ul id="serviceList">
@@ -107,8 +118,8 @@
       <li data-task="Φίλτρο αέρα" data-km="30000" data-months="24" data-last="2025-01-01"></li>
       <li data-task="Φίλτρο καμπίνας" data-km="30000" data-months="24" data-last="2025-01-01"></li>
       <li data-task="Μπουζί" data-km="60000" data-months="48" data-last="2025-01-01"></li>
-      <li data-task="ΚΤΕΟ" data-km="0" data-months="24" data-last="2025-01-01"></li> <!-- Παράδειγμα για time-only -->
-      <li data-task="Ασφάλεια" data-km="0" data-months="12" data-last="2025-01-01"></li>
+      <li data-task="ΚΤΕΟ" data-km="0" data-months="24" data-last="2025-01-01"></li> <!-- Χρησιμοποιεί kteoDate -->
+      <li data-task="Ασφάλεια" data-km="0" data-months="12" data-last="2025-01-01"></li> <!-- Χρησιμοποιεί insuranceDate -->
     </ul>
 
     <p class="signature">Developed by Mike</p>
@@ -119,49 +130,65 @@
       let lastDateStr = document.getElementById('lastServiceDate').value || '2025-01-01';
       let currentKm = parseInt(document.getElementById('currentKm').value) || 0;
       let monthlyKm = parseInt(document.getElementById('monthlyKm').value) || 1000;
+      let insuranceDateStr = document.getElementById('insuranceDate').value || '2025-10-05';
+      let kteoDateStr = document.getElementById('kteoDate').value || '2027-01-01';
       let lastDate = new Date(lastDateStr);
+      let insuranceDate = new Date(insuranceDateStr);
+      let kteoDate = new Date(kteoDateStr);
       let items = document.querySelectorAll('#serviceList li');
 
       // Αποθήκευση δεδομένων τοπικά
       localStorage.setItem('carData', JSON.stringify({
         lastServiceDate: lastDateStr,
         currentKm: currentKm,
-        monthlyKm: monthlyKm
+        monthlyKm: monthlyKm,
+        insuranceDate: insuranceDateStr,
+        kteoDate: kteoDateStr
       }));
 
       items.forEach(item => {
         let task = item.getAttribute('data-task');
         let intervalKm = parseInt(item.getAttribute('data-km')) || 0;
         let intervalMonths = parseInt(item.getAttribute('data-months')) || 0;
+        let nextDate;
 
-        // ΣΩΣΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ KM: Επόμενο πολλαπλάσιο interval
-        let nextKm;
-        if (intervalKm > 0) {
-          let cycles = Math.floor(currentKm / intervalKm);
-          nextKm = (cycles + 1) * intervalKm;
-        } else {
+        // Ειδική Χειρισμός για Ασφάλεια και ΚΤΕΟ: Χρησιμοποίησε τα inputs απευθείας
+        if (task === 'Ασφάλεια') {
+          nextDate = insuranceDate;
           nextKm = 'N/A (Βάσει Χρόνου)';
+        } else if (task === 'ΚΤΕΟ') {
+          nextDate = kteoDate;
+          nextKm = 'N/A (Βάσει Χρόνου)';
+        } else {
+          // ΣΩΣΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ KM: Επόμενο πολλαπλάσιο interval
+          let nextKm;
+          if (intervalKm > 0) {
+            let cycles = Math.floor(currentKm / intervalKm);
+            nextKm = (cycles + 1) * intervalKm;
+          } else {
+            nextKm = 'N/A (Βάσει Χρόνου)';
+          }
+
+          // ΣΩΣΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΗΜΕΡΟΜΗΝΙΑΣ: Time-based
+          let nextDateTime = new Date(lastDate);
+          nextDateTime.setMonth(nextDateTime.getMonth() + intervalMonths);
+
+          // Km-based ημερομηνία (αν intervalKm > 0)
+          let kmDays = 0;
+          if (intervalKm > 0 && monthlyKm > 0) {
+            let kmToNext = nextKm - currentKm;
+            kmDays = Math.round((kmToNext / monthlyKm) * 30);
+          }
+          let nextDateKm = new Date();
+          nextDateKm.setDate(nextDateKm.getDate() + kmDays);
+
+          // Χρησιμοποίησε το νωρίτερο (km ή time-based)
+          nextDate = nextDateTime < nextDateKm ? nextDateTime : nextDateKm;
         }
-
-        // ΣΩΣΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΗΜΕΡΟΜΗΝΙΑΣ: Time-based
-        let nextDateTime = new Date(lastDate);
-        nextDateTime.setMonth(nextDateTime.getMonth() + intervalMonths);
-
-        // Km-based ημερομηνία (αν intervalKm > 0)
-        let kmDays = 0;
-        if (intervalKm > 0 && monthlyKm > 0) {
-          let kmToNext = nextKm - currentKm;
-          kmDays = Math.round((kmToNext / monthlyKm) * 30);
-        }
-        let nextDateKm = new Date();
-        nextDateKm.setDate(nextDateKm.getDate() + kmDays);
-
-        // Χρησιμοποίησε το νωρίτερο (km ή time-based)
-        let nextDate = nextDateTime < nextDateKm ? nextDateTime : nextDateKm;
 
         // Εμφάνιση
         let daysToNext = Math.max(0, Math.ceil((nextDate - new Date()) / (1000 * 60 * 60 * 24)));
-        let statusClass = daysToNext < 20 ? 'warning' : '';
+        let statusClass = daysToNext < 20 ? 'warning' : (daysToNext > 365 ? 'info' : '');
         item.innerHTML = `<span class="${statusClass}">${task}</span> - Επόμενο: ${nextKm} km ή ${nextDate.toLocaleDateString('el-GR')} (σε ${daysToNext} μέρες)`;
 
         // Βασική Ειδοποίηση (αν <20 μέρες)
@@ -184,6 +211,8 @@
         document.getElementById('lastServiceDate').value = data.lastServiceDate || '2025-01-01';
         document.getElementById('currentKm').value = data.currentKm || 10000;
         document.getElementById('monthlyKm').value = data.monthlyKm || 1000;
+        document.getElementById('insuranceDate').value = data.insuranceDate || '2025-10-05';
+        document.getElementById('kteoDate').value = data.kteoDate || '2027-01-01';
       }
       updateService(); // Αυτόματο update στην αρχή
 
