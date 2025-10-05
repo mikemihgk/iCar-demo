@@ -3,17 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iCar Audi Q2</title>
-  <link rel="stylesheet" href="style.css">
+  <title>MyCarCare - Audi Q2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .car-image {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px 0;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    #serviceList {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    #serviceList li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+
+    .signature {
+      margin-top: 20px;
+      font-size: 0.8em;
+      color: #888;
+    }
+
+    .warning {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>iCar</h1>
+    <h1>MyCarCare</h1>
     <img src="https://i.ibb.co/4p7J2Qd/audi-q2-grey.png" alt="Audi Q2" class="car-image">
     <h2>Audi Q2 1.0 TFSI - 2021</h2>
 
-    <label for="currentKm">Τρέχον Χλμ:</label>
+    <label for="lastServiceDate">Ημερομηνία Τελευταίου Service:</label>
+    <input type="date" id="lastServiceDate" value="2025-01-01">
+
+    <label for="currentKm">Τρέχον Χιλιομετρητή:</label>
     <input type="number" id="currentKm" value="10000">
+
+    <label for="monthlyKm">Περίπου Km/Μήνα:</label>
+    <input type="number" id="monthlyKm" value="1000" min="0">
+
     <button onclick="updateService()">Ενημέρωση Service</button>
     
     <ul id="serviceList">
@@ -21,11 +107,91 @@
       <li data-task="Φίλτρο αέρα" data-km="30000" data-months="24" data-last="2025-01-01"></li>
       <li data-task="Φίλτρο καμπίνας" data-km="30000" data-months="24" data-last="2025-01-01"></li>
       <li data-task="Μπουζί" data-km="60000" data-months="48" data-last="2025-01-01"></li>
+      <li data-task="ΚΤΕΟ" data-km="0" data-months="24" data-last="2025-01-01"></li> <!-- Παράδειγμα για time-only -->
+      <li data-task="Ασφάλεια" data-km="0" data-months="12" data-last="2025-01-01"></li>
     </ul>
 
     <p class="signature">Developed by Mike</p>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    function updateService() {
+      let lastDateStr = document.getElementById('lastServiceDate').value || '2025-01-01';
+      let currentKm = parseInt(document.getElementById('currentKm').value) || 0;
+      let monthlyKm = parseInt(document.getElementById('monthlyKm').value) || 1000;
+      let lastDate = new Date(lastDateStr);
+      let items = document.querySelectorAll('#serviceList li');
+
+      // Αποθήκευση δεδομένων τοπικά
+      localStorage.setItem('carData', JSON.stringify({
+        lastServiceDate: lastDateStr,
+        currentKm: currentKm,
+        monthlyKm: monthlyKm
+      }));
+
+      items.forEach(item => {
+        let task = item.getAttribute('data-task');
+        let intervalKm = parseInt(item.getAttribute('data-km')) || 0;
+        let intervalMonths = parseInt(item.getAttribute('data-months')) || 0;
+
+        // ΣΩΣΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ KM: Επόμενο πολλαπλάσιο interval
+        let nextKm;
+        if (intervalKm > 0) {
+          let cycles = Math.floor(currentKm / intervalKm);
+          nextKm = (cycles + 1) * intervalKm;
+        } else {
+          nextKm = 'N/A (Βάσει Χρόνου)';
+        }
+
+        // ΣΩΣΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΗΜΕΡΟΜΗΝΙΑΣ: Time-based
+        let nextDateTime = new Date(lastDate);
+        nextDateTime.setMonth(nextDateTime.getMonth() + intervalMonths);
+
+        // Km-based ημερομηνία (αν intervalKm > 0)
+        let kmDays = 0;
+        if (intervalKm > 0 && monthlyKm > 0) {
+          let kmToNext = nextKm - currentKm;
+          kmDays = Math.round((kmToNext / monthlyKm) * 30);
+        }
+        let nextDateKm = new Date();
+        nextDateKm.setDate(nextDateKm.getDate() + kmDays);
+
+        // Χρησιμοποίησε το νωρίτερο (km ή time-based)
+        let nextDate = nextDateTime < nextDateKm ? nextDateTime : nextDateKm;
+
+        // Εμφάνιση
+        let daysToNext = Math.max(0, Math.ceil((nextDate - new Date()) / (1000 * 60 * 60 * 24)));
+        let statusClass = daysToNext < 20 ? 'warning' : '';
+        item.innerHTML = `<span class="${statusClass}">${task}</span> - Επόμενο: ${nextKm} km ή ${nextDate.toLocaleDateString('el-GR')} (σε ${daysToNext} μέρες)`;
+
+        // Βασική Ειδοποίηση (αν <20 μέρες)
+        if (daysToNext < 20 && daysToNext > 0) {
+          // Browser notification (αν επιτρέπεται)
+          if (Notification.permission === 'granted') {
+            new Notification(`${task}: Σε ${daysToNext} μέρες!`);
+          } else {
+            alert(`${task}: Σε ${daysToNext} μέρες! Κλείσε ραντεβού service.`);
+          }
+        }
+      });
+    }
+
+    // Φόρτωση αποθηκευμένων δεδομένων στην αρχή
+    window.onload = function() {
+      let saved = localStorage.getItem('carData');
+      if (saved) {
+        let data = JSON.parse(saved);
+        document.getElementById('lastServiceDate').value = data.lastServiceDate || '2025-01-01';
+        document.getElementById('currentKm').value = data.currentKm || 10000;
+        document.getElementById('monthlyKm').value = data.monthlyKm || 1000;
+      }
+      updateService(); // Αυτόματο update στην αρχή
+
+      // Ζήτα άδεια για notifications (προαιρετικά)
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    };
+  </script>
 </body>
 </html>
