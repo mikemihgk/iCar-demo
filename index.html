@@ -1,43 +1,69 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iCar Demo</title>
-<link rel="stylesheet" href="icar.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCar Demo - Διαχείριση Οχημάτων</title>
+    <link rel="stylesheet" href="icar.css">
 </head>
 <body>
+    <header>
+        <h1>iCar Demo</h1>
+        <p>Διαχείριση και αποθήκευση οχημάτων με σημεία ελέγχου</p>
+    </header>
 
-<header>🚗 iCar Service Manager</header>
+    <main>
+        <!-- Φόρμα Προσθήκης Οχήματος -->
+        <section id="add-vehicle-section">
+            <h2>Προσθήκη Νέου Οχήματος</h2>
+            <form id="vehicle-form">
+                <div class="form-group">
+                    <label for="brand">Μάρκα:</label>
+                    <input type="text" id="brand" placeholder="π.χ. Toyota" required>
+                </div>
+                <div class="form-group">
+                    <label for="model">Μοντέλο:</label>
+                    <input type="text" id="model" placeholder="π.χ. Corolla" required>
+                </div>
+                <div class="form-group">
+                    <label for="year">Χρονολογία:</label>
+                    <input type="number" id="year" min="1900" max="2025" placeholder="π.χ. 2020" required>
+                </div>
+                <button type="button" id="add-btn">Προσθήκη Οχήματος</button>
+            </form>
+        </section>
 
-<div class="container">
-  <h2>Προσθήκη Οχήματος</h2>
-  <label>Μάρκα:</label>
-  <select id="brand">
-    <option value="">--Επιλέξτε Μάρκα--</option>
-    <option>Audi</option><option>BMW</option><option>Mercedes</option>
-    <option>Smart</option><option>Toyota</option><option>Peugeot</option>
-  </select>
+        <!-- Λίστα Αποθηκευμένων Οχημάτων -->
+        <section id="vehicles-section">
+            <h2>Αποθηκευμένα Οχήματα</h2>
+            <div class="stats">
+                <span id="vehicle-count">Συνολικά Οχήματα: 0</span>
+            </div>
+            <ul id="vehicle-list"></ul>
+        </section>
 
-  <label>Μοντέλο:</label>
-  <select id="model">
-    <option value="">--Επιλέξτε Μοντέλο--</option>
-  </select>
+        <!-- Κουμπιά Export/Import -->
+        <section id="backup-section">
+            <h3>Backup Δεδομένων</h3>
+            <button onclick="exportData()">Εξαγωγή σε JSON</button>
+            <input type="file" id="import-file" accept=".json" onchange="importData(event)" style="display: none;">
+            <button onclick="document.getElementById('import-file').click()">Εισαγωγή από JSON</button>
+        </section>
 
-  <label>Χρονολογία:</label>
-  <input type="text" id="year" placeholder="π.χ. 2018">
+        <!-- Modal για Λεπτομέρειες Οχήματος -->
+        <div id="vehicle-details" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeDetails()">&times;</span>
+                <h3 id="modal-title"></h3>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </main>
 
-  <button id="saveVehicle">Αποθήκευση Οχήματος</button>
+    <footer>
+        <p>&copy; 2024 iCar Demo by Mike Mihgk</p>
+    </footer>
 
-  <h2>Αποθηκευμένα Οχήματα</h2>
-  <div id="vehicleList"></div>
-
-  <h2>Σημεία Ελέγχου</h2>
-  <div id="serviceList"></div>
-</div>
-
-<footer>by MikeMigk</footer>
-
-<script src="icar.js"></script>
+    <script src="icar.js"></script>
 </body>
 </html>
