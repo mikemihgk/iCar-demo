@@ -84,62 +84,25 @@ function loadVehicles() {
     div.className = "vehicle-item";
     div.dataset.key = key;
 
-    const span = document.createElement("span");
-    span.textContent = `${v.brand} ${v.model} (${v.year})`;
-    span.style.cursor = "pointer";
-    span.onclick = () => loadVehicle(key);
+    div.innerHTML = `<span>${v.brand} ${v.model} (${v.year})</span>
+                     <button class="delete-btn">❌</button>`;
 
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "❌";
-    delBtn.style.marginLeft = "10px";
-    delBtn.onclick = (e) => {
+    // Επιλογή οχήματος
+    div.querySelector("span").addEventListener("click", () => loadVehicle(key));
+    // Διαγραφή οχήματος
+    div.querySelector(".delete-btn").addEventListener("click", (e) => {
       e.stopPropagation();
-      if(confirm(`Θέλεις να διαγράψεις το όχημα ${v.brand} ${v.model}?`)){
-        delete vehicles[key];
-        localStorage.setItem("vehicles", JSON.stringify(vehicles));
-        loadVehicles();
-        clearServiceData();
-      }
-    };
+      delete vehicles[key];
+      localStorage.setItem("vehicles", JSON.stringify(vehicles));
+      loadVehicles();
+    });
 
-    div.appendChild(span);
-    div.appendChild(delBtn);
     vehicleList.appendChild(div);
   });
 
-  // Επισημαίνουμε πρώτο αν υπάρχει
+  // Επισήμανση πρώτου οχήματος
   const first = vehicleList.querySelector(".vehicle-item span");
-  if (first) first.click();
-}
-
-// Καθαρισμός service όταν διαγράφεται όχημα
-function clearServiceData() {
-  document.querySelectorAll(".checkbox-item").forEach(item => {
-    const checkbox = item.querySelector("input[type='checkbox']");
-    const note = item.querySelector("input[type='text']");
-    checkbox.checked = false;
-    note.value = "";
-    item.classList.remove("checked");
-  });
-}
-
-// Χρωματισμός τσεκ box
-serviceList.addEventListener("change", e => {
-  if(e.target.type === "checkbox"){
-    const parent = e.target.closest(".checkbox-item");
-    parent.classList.toggle("checked", e.target.checked);
-    saveCurrentService();
-  }
-});
-
-function saveCurrentService() {
-  const activeVehicle = vehicleList.querySelector(".vehicle-item span.active");
-  const activeDiv = vehicleList.querySelector(".vehicle-item.active");
-  if (!activeDiv) return;
-  const key = activeDiv.dataset.key;
-  let vehicles = JSON.parse(localStorage.getItem("vehicles") || "{}");
-  vehicles[key].services = getCurrentServiceData();
-  localStorage.setItem("vehicles", JSON.stringify(vehicles));
+  if (first) loadVehicle(first.parentElement.dataset.key);
 }
 
 // Φόρτωση service για όχημα
@@ -169,6 +132,24 @@ function loadVehicle(key) {
       item.classList.remove("checked");
     }
   });
+}
+
+// Χρωματισμός τσεκ box
+serviceList.addEventListener("change", e => {
+  if(e.target.type === "checkbox"){
+    const parent = e.target.closest(".checkbox-item");
+    parent.classList.toggle("checked", e.target.checked);
+    saveCurrentService();
+  }
+});
+
+function saveCurrentService() {
+  const activeVehicle = vehicleList.querySelector(".vehicle-item.active");
+  if (!activeVehicle) return;
+  const key = activeVehicle.dataset.key;
+  let vehicles = JSON.parse(localStorage.getItem("vehicles") || "{}");
+  vehicles[key].services = getCurrentServiceData();
+  localStorage.setItem("vehicles", JSON.stringify(vehicles));
 }
 
 loadVehicles();
