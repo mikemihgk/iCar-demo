@@ -1,0 +1,12 @@
+function updateService() {
+  let currentKm = parseInt(document.getElementById('currentKm').value);
+  let items = document.querySelectorAll('#serviceList li');
+  let now = new Date();
+  items.forEach(item => {
+    let km = parseInt(item.getAttribute('data-km'));
+    let months = parseInt(item.getAttribute('data-months'));
+    let nextDate = new Date();
+    nextDate.setMonth(now.getMonth() + months);
+    item.innerHTML = `${item.textContent.split('-')[0]} - Επόμενο: ${currentKm + km} km ή ${nextDate.toLocaleDateString()}`;
+  });
+}
