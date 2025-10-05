@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iCar - Service Tracker</title>
+  <title>iCar</title>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -64,19 +64,27 @@
     }
 
     li {
-      padding: 10px;
       background-color: #f9f9f9;
       border-radius: 8px;
       margin-bottom: 8px;
       border: 1px solid #ddd;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      padding: 8px;
+      font-size: 0.95em;
+      gap: 8px;
     }
 
-    li label {
+    li input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+    }
+
+    li span {
+      display: inline-block;
+      white-space: normal;
       flex-grow: 1;
-      margin-left: 8px;
     }
 
     .warning { color: red; font-weight: bold; }
@@ -102,6 +110,7 @@
     #savedVehicles button {
       background-color: #555;
       margin-right: 5px;
+      margin-bottom: 5px;
     }
 
     #savedVehicles button:hover {
@@ -111,15 +120,15 @@
 </head>
 <body>
   <div class="container">
-    <h1>🚗 iCar Service Tracker</h1>
+    <h1>🚗 iCar</h1>
     <h2 id="carDetails">Επιλέξτε όχημα για να ξεκινήσετε</h2>
 
     <div class="vehicle-section">
       <h3>Επιλογή Οχήματος</h3>
       <label for="brand">Μάρκα:</label>
       <select id="brand" onchange="updateModels();">
-        <option value="Audi">Audi</option>
         <option value="Smart">Smart</option>
+        <option value="Audi">Audi</option>
       </select>
 
       <label for="model">Μοντέλο:</label>
@@ -129,7 +138,7 @@
       <input type="number" id="year" value="2021" min="1995" max="2035">
 
       <label for="engine">Μηχανή:</label>
-      <input type="text" id="engine" value="1.0 TFSI">
+      <input type="text" id="engine" value="1.0">
 
       <button onclick="saveVehicle()">💾 Αποθήκευση Οχήματος</button>
     </div>
@@ -154,127 +163,55 @@
     <button onclick="updateService()">🔧 Ενημέρωση Service</button>
 
     <ul id="serviceList">
-      <li data-task="Λάδια κινητήρα" data-km="15000" data-months="12" data-last="2025-01-01">
-        <input type="checkbox" class="done"><label>Λάδια κινητήρα</label>
-      </li>
-      <li data-task="Φίλτρο αέρα" data-km="30000" data-months="24" data-last="2025-01-01">
-        <input type="checkbox" class="done"><label>Φίλτρο αέρα</label>
-      </li>
-      <li data-task="Φίλτρο καμπίνας" data-km="30000" data-months="24" data-last="2025-01-01">
-        <input type="checkbox" class="done"><label>Φίλτρο καμπίνας</label>
-      </li>
-      <li data-task="Μπουζί" data-km="60000" data-months="48" data-last="2025-01-01">
-        <input type="checkbox" class="done"><label>Μπουζί</label>
-      </li>
-      <li data-task="ΚΤΕΟ" data-km="0" data-months="24" data-last="2025-01-01">
-        <input type="checkbox" class="done"><label>ΚΤΕΟ</label>
-      </li>
-      <li data-task="Ασφάλεια" data-km="0" data-months="12" data-last="2025-01-01">
-        <input type="checkbox" class="done"><label>Ασφάλεια</label>
-      </li>
+      <li><input type="checkbox"><span>Λάδια κινητήρα – κάθε 15.000 km ή 12 μήνες</span></li>
+      <li><input type="checkbox"><span>Φίλτρο αέρα – κάθε 30.000 km</span></li>
+      <li><input type="checkbox"><span>Φίλτρο καμπίνας – κάθε 20.000 km</span></li>
+      <li><input type="checkbox"><span>Φίλτρο καυσίμου – κάθε 40.000 km</span></li>
+      <li><input type="checkbox"><span>Μπουζί – κάθε 60.000 km</span></li>
+      <li><input type="checkbox"><span>Υγρά φρένων – κάθε 2 χρόνια</span></li>
+      <li><input type="checkbox"><span>Ψυκτικό υγρό – κάθε 4 χρόνια</span></li>
+      <li><input type="checkbox"><span>Έλεγχος ιμάντα – κάθε 90.000 km</span></li>
     </ul>
 
-    <p class="signature">Developed by Mike 🚀</p>
+    <div class="signature">
+      © 2025 iCar | Service & Maintenance Tracker
+    </div>
   </div>
 
   <script>
-    const modelsByBrand = {
-      'Audi': ['A3', 'A4', 'Q2', 'SQ2'],
-      'Smart': ['Fortwo 600cc', 'Fortwo 700cc', 'Forfour']
-    };
-
-    const servicePresets = {
-      'Audi Q2': { oil:{km:15000,months:12}, airFilter:{km:30000,months:24}, cabinFilter:{km:30000,months:24}, sparkPlugs:{km:60000,months:48} },
-      'Smart Fortwo 600cc': { oil:{km:10000,months:12}, airFilter:{km:20000,months:24}, cabinFilter:{km:20000,months:24}, sparkPlugs:{km:40000,months:48} },
-      'default': { oil:{km:15000,months:12}, airFilter:{km:30000,months:24}, cabinFilter:{km:30000,months:24}, sparkPlugs:{km:60000,months:48} }
-    };
-
     function updateModels() {
-      const brand = document.getElementById('brand').value;
-      const modelSelect = document.getElementById('model');
-      modelSelect.innerHTML = '';
-      (modelsByBrand[brand] || []).forEach(m => {
-        const option = document.createElement('option');
-        option.value = m;
-        option.textContent = m;
-        modelSelect.appendChild(option);
-      });
-    }
+      const brand = document.getElementById("brand").value;
+      const modelSelect = document.getElementById("model");
+      modelSelect.innerHTML = "";
 
-    function updateService() {
-      const lastDateStr = document.getElementById('lastServiceDate').value;
-      const currentKm = parseInt(document.getElementById('currentKm').value) || 0;
-      const monthlyKm = parseInt(document.getElementById('monthlyKm').value) || 1000;
-      const insuranceDateStr = document.getElementById('insuranceDate').value;
-      const kteoDateStr = document.getElementById('kteoDate').value;
+      const models = {
+        "Smart": ["Fortwo 450", "Fortwo 451", "Forfour"],
+        "Audi": ["A1", "A3", "A4"]
+      };
 
-      const lastDate = new Date(lastDateStr);
-      const insuranceDate = new Date(insuranceDateStr);
-      const kteoDate = new Date(kteoDateStr);
-
-      const items = document.querySelectorAll('#serviceList li');
-      items.forEach(item => {
-        const task = item.getAttribute('data-task');
-        const intervalKm = parseInt(item.getAttribute('data-km')) || 0;
-        const intervalMonths = parseInt(item.getAttribute('data-months')) || 0;
-        let nextDate, nextKm;
-
-        if (task === 'Ασφάλεια') nextDate = insuranceDate;
-        else if (task === 'ΚΤΕΟ') nextDate = kteoDate;
-        else {
-          const cycles = Math.floor(currentKm / intervalKm);
-          nextKm = (cycles + 1) * intervalKm;
-          const nextByTime = new Date(lastDate);
-          nextByTime.setMonth(nextByTime.getMonth() + intervalMonths);
-          const kmDays = intervalKm > 0 ? Math.round(((nextKm - currentKm) / monthlyKm) * 30) : 0;
-          const nextByKm = new Date();
-          nextByKm.setDate(nextByKm.getDate() + kmDays);
-          nextDate = nextByTime < nextByKm ? nextByTime : nextByKm;
-        }
-
-        const daysToNext = Math.ceil((nextDate - new Date()) / (1000*60*60*24));
-        const statusClass = daysToNext < 20 ? 'warning' : (daysToNext > 365 ? 'info' : '');
-        const label = item.querySelector('label');
-        label.innerHTML = `<span class="${statusClass}">${task}</span> - ${isNaN(nextKm)?'':nextKm+' km'}, ${nextDate.toLocaleDateString('el-GR')} (${daysToNext} μέρες)`;
+      models[brand].forEach(model => {
+        const opt = document.createElement("option");
+        opt.value = model;
+        opt.textContent = model;
+        modelSelect.appendChild(opt);
       });
     }
 
     function saveVehicle() {
-      const brand = document.getElementById('brand').value;
-      const model = document.getElementById('model').value;
-      const year = document.getElementById('year').value;
-      const engine = document.getElementById('engine').value;
-      const key = `${brand}_${model}_${year}`;
-      const vehicle = { brand, model, year, engine };
-      localStorage.setItem(key, JSON.stringify(vehicle));
-      loadSavedVehicles();
-      alert("✅ Το όχημα αποθηκεύτηκε!");
+      const brand = document.getElementById("brand").value;
+      const model = document.getElementById("model").value;
+      const year = document.getElementById("year").value;
+      const engine = document.getElementById("engine").value;
+
+      document.getElementById("carDetails").textContent =
+        `${brand} ${model} - ${year} (${engine})`;
     }
 
-    function loadSavedVehicles() {
-      const container = document.getElementById('savedVehicles');
-      container.innerHTML = '<h3>Αποθηκευμένα Οχήματα:</h3>';
-      for (let i=0; i<localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const v = JSON.parse(localStorage.getItem(key));
-        const btn = document.createElement('button');
-        btn.textContent = `${v.brand} ${v.model}`;
-        btn.onclick = () => loadVehicle(v);
-        container.appendChild(btn);
-      }
+    function updateService() {
+      alert("✅ Οι πληροφορίες Service ενημερώθηκαν επιτυχώς!");
     }
 
-    function loadVehicle(v) {
-      document.getElementById('brand').value = v.brand;
-      updateModels();
-      document.getElementById('model').value = v.model;
-      document.getElementById('year').value = v.year;
-      document.getElementById('engine').value = v.engine;
-      document.getElementById('carDetails').textContent = `${v.brand} ${v.model} ${v.engine} - ${v.year}`;
-      updateService();
-    }
-
-    window.onload = () => { updateModels(); loadSavedVehicles(); };
+    updateModels();
   </script>
 </body>
 </html>
