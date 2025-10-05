@@ -1,89 +1,116 @@
-const modelsByBrand={
-"Smart":["Fortwo","Forfour"],
-"Audi":["A1","A3","A4","A6","Q2","Q3","Q5"],
-"BMW":["1 Series","3 Series","X1","X3","X5"],
-"Mercedes":["A-Class","C-Class","E-Class","GLA","GLE"],
-"Toyota":["Yaris","Corolla","RAV4","Hilux"],
-"Volkswagen":["Polo","Golf","Passat","Tiguan"],
-"Ford":["Fiesta","Focus","Kuga","Mondeo"],
-"Honda":["Civic","Jazz","CR-V"],
-"Hyundai":["i10","i20","i30","Tucson"],
-"Kia":["Picanto","Rio","Sportage"],
-"Nissan":["Micra","Qashqai","X-Trail"],
-"Opel":["Corsa","Astra","Insignia"],
-"Peugeot":["208","308","3008"],
-"Renault":["Clio","Megane","Captur"],
-"Seat":["Ibiza","Leon","Arona"],
-"Skoda":["Fabia","Octavia","Kodiaq"]
+const modelOptions = {
+  Audi: ["A3", "A4", "A6", "Q2", "Q3", "Q5"],
+  BMW: ["1 Series", "3 Series", "5 Series", "X1", "X3"],
+  Mercedes: ["A-Class", "C-Class", "E-Class", "GLA", "GLC"],
+  Smart: ["Fortwo", "Forfour", "Roadster"],
+  Toyota: ["Yaris", "Corolla", "Aygo", "C-HR"],
+  Peugeot: ["208", "308", "3008", "2008"]
 };
 
-function updateModels(){
-  const brand=document.getElementById("brand").value;
-  const m=document.getElementById("model");
-  m.innerHTML="";
-  if(modelsByBrand[brand]) modelsByBrand[brand].forEach(x=>{
-    const o=document.createElement("option");o.textContent=x;m.appendChild(o);
-  });
-}
-
-const serviceItems=[
-"Αλλαγή λαδιών κινητήρα","Φίλτρο λαδιού","Φίλτρο αέρα","Μπουζί","Ψυκτικό υγρό","Υγρά φρένων",
-"Φρένα (δίσκοι/τακάκια)","Υαλοκαθαριστήρες","Μπαταρία","Φώτα εμπρός/πίσω","Αλλαγή ελαστικών","Έλεγχος πίεσης ελαστικών","Ευθυγράμμιση","Αλλαγή φίλτρου καμπίνας","ΚΤΕΟ","Ασφάλεια","Έλεγχος ιμάντα χρονισμού","Καθαρισμός ψυγείου","Έλεγχος συστήματος διεύθυνσης"
+const serviceItems = [
+  "Αλλαγή λαδιών", "Φίλτρο λαδιού", "Φίλτρο αέρα", "Φίλτρο καμπίνας", 
+  "Φίλτρο βενζίνης", "Υγρά φρένων", "Τακάκια", "Δίσκοι φρένων",
+  "Ελαστικά", "Πίεση αέρα ελαστικών", "Αλλαγή ελαστικών",
+  "Μπαταρία", "Υαλοκαθαριστήρες", "Ψυκτικό υγρό", "Ιμάντας χρονισμού",
+  "Φώτα", "Στάθμη λαδιού", "Κλιματισμός", "Σύστημα διεύθυνσης",
+  "Αμορτισέρ", "Εξάτμιση", "Ανάρτηση", "Διαρροές λαδιού", "Σύστημα πέδησης"
 ];
 
-function loadChecklist(){
-  const ul=document.getElementById("checklist");
-  ul.innerHTML="";
-  serviceItems.forEach((item,i)=>{
-    const li=document.createElement("li");
-    li.innerHTML=`<input type="checkbox" id="chk${i}" onchange="toggleCheck(${i})">
-    <span>${item}</span>
-    <input class="note" type="text" id="note${i}" placeholder="Ημερομηνία ή σημείωση">`;
-    ul.appendChild(li);
+document.getElementById("brand").addEventListener("change", function() {
+  const models = modelOptions[this.value] || [];
+  const modelSelect = document.getElementById("model");
+  modelSelect.innerHTML = "<option value=''>--Επιλέξτε Μοντέλο--</option>";
+  models.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m;
+    modelSelect.appendChild(opt);
+  });
+});
+
+const serviceList = document.getElementById("serviceList");
+serviceItems.forEach(item => {
+  const div = document.createElement("div");
+  div.className = "checkbox-item";
+  div.innerHTML = `
+    <label><input type="checkbox"> ${item}</label>
+    <input type="text" placeholder="Ημερομηνία/Σχόλιο">
+  `;
+  serviceList.appendChild(div);
+});
+
+serviceList.addEventListener("change", e => {
+  if (e.target.type === "checkbox") {
+    const parent = e.target.closest(".checkbox-item");
+    parent.classList.toggle("checked", e.target.checked);
+    saveCurrentService();
+  }
+});
+
+document.getElementById("saveVehicle").addEventListener("click", () => {
+  const brand = document.getElementById("brand").value;
+  const model = document.getElementById("model").value;
+  const year = document.getElementById("year").value;
+  if (!brand || !model || !year) return alert("Συμπληρώστε όλα τα πεδία!");
+
+  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+  vehicles.push({ brand, model, year, services: getCurrentServiceData() });
+  localStorage.setItem("vehicles", JSON.stringify(vehicles));
+  loadVehicles();
+});
+
+function getCurrentServiceData() {
+  const data = [];
+  document.querySelectorAll(".checkbox-item").forEach(item => {
+    const checkbox = item.querySelector("input[type='checkbox']");
+    const note = item.querySelector("input[type='text']").value;
+    data.push({ name: item.innerText.trim(), checked: checkbox.checked, note });
+  });
+  return data;
+}
+
+function saveCurrentService() {
+  const selectedVehicle = document.querySelector(".vehicle-item.active");
+  if (!selectedVehicle) return;
+  const name = selectedVehicle.dataset.name;
+  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+  const v = vehicles.find(v => v.brand + v.model + v.year === name);
+  if (v) {
+    v.services = getCurrentServiceData();
+    localStorage.setItem("vehicles", JSON.stringify(vehicles));
+  }
+}
+
+function loadVehicles() {
+  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+  const list = document.getElementById("vehicleList");
+  list.innerHTML = "";
+  vehicles.forEach(v => {
+    const div = document.createElement("div");
+    div.className = "vehicle-item";
+    div.dataset.name = v.brand + v.model + v.year;
+    div.textContent = `${v.brand} ${v.model} (${v.year})`;
+    div.style.cursor = "pointer";
+    div.onclick = () => {
+      document.querySelectorAll(".vehicle-item").forEach(i => i.classList.remove("active"));
+      div.classList.add("active");
+      loadServiceData(v.services);
+    };
+    list.appendChild(div);
   });
 }
-loadChecklist();
 
-function toggleCheck(i){
-  const li=document.getElementById("chk"+i).closest("li");
-  li.classList.toggle("checked");
-}
-
-function saveVehicle(){
-  const brand=document.getElementById("brand").value;
-  const model=document.getElementById("model").value;
-  const year=document.getElementById("year").value;
-  const engine=document.getElementById("engine").value;
-  if(!brand||!model){alert("Συμπλήρωσε μάρκα και μοντέλο!");return;}
-  const vehicles=JSON.parse(localStorage.getItem("vehicles")||"{}");
-  if(!vehicles[brand+" "+model]) vehicles[brand+" "+model]={brand,model,year,engine,service:{}};
-  localStorage.setItem("vehicles",JSON.stringify(vehicles));
-  displayVehicles();
-}
-
-function saveAll(){
-  const brand=document.getElementById("brand").value;
-  const model=document.getElementById("model").value;
-  const key=brand+" "+model;
-  const vehicles=JSON.parse(localStorage.getItem("vehicles")||"{}");
-  if(!vehicles[key]){alert("Αποθήκευσε πρώτα το όχημα!");return;}
-  vehicles[key].service={};
-  serviceItems.forEach((item,i)=>{
-    const checked=document.getElementById("chk"+i).checked;
-    const note=document.getElementById("note"+i).value;
-    vehicles[key].service[item]={checked,note};
+function loadServiceData(services) {
+  const items = document.querySelectorAll(".checkbox-item");
+  items.forEach((item, i) => {
+    const checkbox = item.querySelector("input[type='checkbox']");
+    const note = item.querySelector("input[type='text']");
+    if (services[i]) {
+      checkbox.checked = services[i].checked;
+      note.value = services[i].note;
+      item.classList.toggle("checked", checkbox.checked);
+    }
   });
-  localStorage.setItem("vehicles",JSON.stringify(vehicles));
-  alert("✅ Όλα αποθηκεύτηκαν!");
-  displayVehicles();
 }
 
-function displayVehicles(){
-  const div=document.getElementById("savedVehicles");
-  div.innerHTML="";
-  const vehicles=JSON.parse(localStorage.getItem("vehicles")||"{}");
-  Object.keys(vehicles).forEach(key=>{
-    const v=vehicles[key];
-    const btn=document.createElement("button");
-    btn.textContent=key;
-    btn.onclick=
+loadVehicles();
