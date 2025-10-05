@@ -1,31 +1,45 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f5f5f5;
-    color: #333;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
 }
 
-h1 {
-    color: #333;
+.container {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-input {
-    margin-right: 10px;
-    padding: 5px;
+.car-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 button {
-    padding: 5px 10px;
-    cursor: pointer;
+  padding: 10px 20px;
+  margin: 10px 0;
+  cursor: pointer;
 }
 
-ul {
-    margin-top: 20px;
+#serviceList {
+  list-style: none;
+  padding: 0;
+  text-align: left;
 }
 
-li {
-    margin-bottom: 10px;
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 5px;
+#serviceList li {
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.signature {
+  margin-top: 20px;
+  font-size: 0.8em;
+  color: #888;
 }
