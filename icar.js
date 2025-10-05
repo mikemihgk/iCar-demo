@@ -1,3 +1,4 @@
+// --- Κύρια δεδομένα ---
 const modelOptions = {
   Audi: ["A3","A4","A6","Q2","Q3","Q5"],
   BMW: ["1 Series","3 Series","5 Series","X1","X3"],
@@ -8,7 +9,7 @@ const modelOptions = {
 };
 
 const serviceItems = [
-  "Αλλαγή λαδιών", "Φίλτρο λαδιού", "Φίλτρο αέρα", "Φίλτρο καμπίνας", 
+  "Αλλαγή λαδιών", "Φίλτρο λαδιού", "Φίλτρο αέρα", "Φίλτρο καμπίνας",
   "Φίλτρο βενζίνης", "Υγρά φρένων", "Τακάκια", "Δίσκοι φρένων",
   "Ελαστικά", "Πίεση αέρα ελαστικών", "Αλλαγή ελαστικών",
   "Μπαταρία", "Υαλοκαθαριστήρες", "Ψυκτικό υγρό", "Ιμάντας χρονισμού",
@@ -16,98 +17,123 @@ const serviceItems = [
   "Αμορτισέρ", "Εξάτμιση", "Ανάρτηση", "Διαρροές λαδιού", "Σύστημα πέδησης"
 ];
 
-// Φόρτωση μοντέλων ανάλογα με μάρκα
+// --- Φόρτωση μοντέλων ---
 document.getElementById("brand").addEventListener("change", function() {
   const models = modelOptions[this.value] || [];
   const modelSelect = document.getElementById("model");
   modelSelect.innerHTML = "<option value=''>--Επιλέξτε Μοντέλο--</option>";
-  models.forEach(m => {
+  models.forEach(m=>{
     const opt = document.createElement("option");
-    opt.value = m; opt.textContent = m; modelSelect.appendChild(opt);
+    opt.value = m;
+    opt.textContent = m;
+    modelSelect.appendChild(opt);
   });
 });
 
-// Φόρτωση λίστας σέρβις
+// --- Δημιουργία Service List ---
 const serviceList = document.getElementById("serviceList");
-serviceItems.forEach(item => {
-  const div = document.createElement("div");
-  div.className = "checkbox-item";
-  div.innerHTML = `<label><input type="checkbox"> ${item}</label>
-                   <input type="text" placeholder="Ημερομηνία/Σχόλιο">`;
-  serviceList.appendChild(div);
-});
+function createServiceList() {
+  serviceList.innerHTML = "";
+  serviceItems.forEach(item=>{
+    const div = document.createElement("div");
+    div.className = "checkbox-item";
+    div.innerHTML = `<label><input type="checkbox"> ${item}</label>
+                     <input type="text" placeholder="Ημερομηνία/Σχόλιο">`;
+    serviceList.appendChild(div);
+  });
+}
+createServiceList();
 
-// Χρωματισμός πράσινου όταν τσεκάρεται
-serviceList.addEventListener("change", e => {
-  if (e.target.type === "checkbox") {
-    const parent = e.target.closest(".checkbox-item");
-    parent.classList.toggle("checked", e.target.checked);
-    saveCurrentService();
-  }
-});
-
-// Αποθήκευση οχήματος
-document.getElementById("saveVehicle").addEventListener("click", () => {
+// --- Αποθήκευση Οχήματος ---
+document.getElementById("saveVehicle").addEventListener("click", ()=>{
   const brand = document.getElementById("brand").value;
   const model = document.getElementById("model").value;
   const year = document.getElementById("year").value;
-  if (!brand || !model || !year) return alert("Συμπληρώστε όλα τα πεδία!");
-  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
-  vehicles.push({ brand, model, year, services: getCurrentServiceData() });
+  if(!brand || !model || !year) return alert("Συμπληρώστε όλα τα πεδία!");
+  
+  let vehicles = JSON.parse(localStorage.getItem("vehicles") || "{}");
+  const key = brand + "_" + model + "_" + year;
+
+  // Δημιουργία ή ενημέρωση
+  vehicles[key] = {
+    brand, model, year,
+    services: getCurrentServiceData()
+  };
+  
   localStorage.setItem("vehicles", JSON.stringify(vehicles));
   loadVehicles();
 });
 
-// Αποθήκευση κατάστασης σέρβις
+// --- Λήψη δεδομένων service ---
 function getCurrentServiceData() {
   const data = [];
-  document.querySelectorAll(".checkbox-item").forEach(item => {
+  document.querySelectorAll(".checkbox-item").forEach(item=>{
     const checkbox = item.querySelector("input[type='checkbox']");
     const note = item.querySelector("input[type='text']").value;
-    data.push({ name: item.innerText.trim(), checked: checkbox.checked, note });
+    data.push({checked: checkbox.checked, note});
   });
   return data;
 }
 
-function saveCurrentService() {
-  const selectedVehicle = document.querySelector(".vehicle-item.active");
-  if (!selectedVehicle) return;
-  const name = selectedVehicle.dataset.name;
-  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
-  const v = vehicles.find(v => v.brand + v.model + v.year === name);
-  if (v) { v.services = getCurrentServiceData(); localStorage.setItem("vehicles", JSON.stringify(vehicles)); }
-}
-
-// Φόρτωση αποθηκευμένων οχημάτων
+// --- Φόρτωση Οχημάτων ---
 function loadVehicles() {
-  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "[]");
+  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "{}");
   const list = document.getElementById("vehicleList");
   list.innerHTML = "";
-  vehicles.forEach(v => {
+  Object.keys(vehicles).forEach(key=>{
+    const v = vehicles[key];
     const div = document.createElement("div");
-    div.className = "vehicle-item"; div.dataset.name = v.brand + v.model + v.year;
+    div.className = "vehicle-item";
+    div.dataset.key = key;
     div.textContent = `${v.brand} ${v.model} (${v.year})`;
     div.style.cursor = "pointer";
-    div.onclick = () => {
-      document.querySelectorAll(".vehicle-item").forEach(i => i.classList.remove("active"));
-      div.classList.add("active");
-      loadServiceData(v.services);
-    };
+    div.onclick = ()=>{ loadVehicle(key); };
     list.appendChild(div);
   });
 }
 
-function loadServiceData(services) {
+// --- Φόρτωση Service ενός οχήματος ---
+function loadVehicle(key) {
+  const vehicles = JSON.parse(localStorage.getItem("vehicles") || "{}");
+  const v = vehicles[key];
+  if(!v) return;
+
+  document.getElementById("brand").value = v.brand;
+  document.getElementById("model").value = v.model;
+  document.getElementById("year").value = v.year;
+
+  createServiceList();
   const items = document.querySelectorAll(".checkbox-item");
-  items.forEach((item, i) => {
-    const checkbox = item.querySelector("input[type='checkbox']");
-    const note = item.querySelector("input[type='text']");
-    if (services[i]) {
-      checkbox.checked = services[i].checked;
-      note.value = services[i].note;
-      item.classList.toggle("checked", checkbox.checked);
-    } else { checkbox.checked = false; note.value = ""; item.classList.remove("checked"); }
+  v.services.forEach((s,i)=>{
+    const checkbox = items[i].querySelector("input[type='checkbox']");
+    const note = items[i].querySelector("input[type='text']");
+    checkbox.checked = s.checked;
+    note.value = s.note;
+    items[i].classList.toggle("checked", s.checked);
   });
+
+  // ενεργοποίηση κουμπιού
+  document.querySelectorAll(".vehicle-item").forEach(el=>el.classList.remove("active"));
+  document.querySelector(`.vehicle-item[data-key="${key}"]`).classList.add("active");
 }
 
+// --- Χρώμα πρασίνου στα τσεκ ---
+serviceList.addEventListener("change", e=>{
+  if(e.target.type === "checkbox"){
+    const parent = e.target.closest(".checkbox-item");
+    parent.classList.toggle("checked", e.target.checked);
+    saveActiveService();
+  }
+});
+
+function saveActiveService() {
+  const active = document.querySelector(".vehicle-item.active");
+  if(!active) return;
+  const key = active.dataset.key;
+  let vehicles = JSON.parse(localStorage.getItem("vehicles") || "{}");
+  vehicles[key].services = getCurrentServiceData();
+  localStorage.setItem("vehicles", JSON.stringify(vehicles));
+}
+
+// --- Αρχικοποίηση ---
 loadVehicles();
