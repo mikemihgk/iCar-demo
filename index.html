@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iCar - Audi SQ2</title>
+  <title>iCar</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -100,13 +100,13 @@
   <div class="container">
     <h1>iCar</h1>
     <img id="carImage" src="https://i.ibb.co/0jZ3QbY/audi-sq2-grey.png" alt="Audi SQ2 Grey" class="car-image">
-    <h2 id="carDetails">Audi SQ2 - 2023</h2>
+    <h2 id="carDetails">Audi SQ2 2.0 TFSI - 2023</h2>
 
     <div class="vehicle-section">
       <h3>Επιλογή Οχήματος</h3>
       
       <label for="brand">Μάρκα:</label>
-      <select id="brand" onchange="updateVehicle()">
+      <select id="brand" onchange="updateModels(); updateVehicle();">
         <option value="Audi">Audi</option>
         <option value="BMW">BMW</option>
         <option value="Mercedes">Mercedes</option>
@@ -115,21 +115,15 @@
       </select>
 
       <label for="model">Μοντέλο:</label>
-      <select id="model" onchange="updateVehicle()">
-        <option value="SQ2">SQ2</option>
-        <option value="Q2">Q2</option>
-        <option value="A3">A3</option>
-        <option value="X3">X3</option>
-        <option value="C-Class">C-Class</option>
-        <option value="Corolla">Corolla</option>
-        <option value="Golf">Golf</option>
+      <select id="model" onchange="updateVehicle();">
+        <!-- Θα γεμίσει δυναμικά -->
       </select>
 
       <label for="year">Χρονολογία:</label>
-      <input type="number" id="year" value="2023" min="2000" max="2030" onchange="updateVehicle()">
+      <input type="number" id="year" value="2023" min="2000" max="2030" onchange="updateVehicle();">
 
       <label for="engine">Μηχανή (π.χ. 2.0 TFSI):</label>
-      <input type="text" id="engine" value="2.0 TFSI" onchange="updateVehicle()">
+      <input type="text" id="engine" value="2.0 TFSI" onchange="updateVehicle();">
     </div>
 
     <label for="lastServiceDate">Ημερομηνία Τελευταίου Service:</label>
@@ -150,7 +144,6 @@
     <button onclick="updateService()">Ενημέρωση Service</button>
     
     <ul id="serviceList">
-      <!-- Η λίστα θα ενημερωθεί δυναμικά βάσει μοντέλου -->
       <li data-task="Λάδια κινητήρα" data-km="20000" data-months="12" data-last="2025-01-01"></li>
       <li data-task="Φίλτρο αέρα" data-km="40000" data-months="24" data-last="2025-01-01"></li>
       <li data-task="Φίλτρο καμπίνας" data-km="30000" data-months="24" data-last="2025-01-01"></li>
@@ -163,36 +156,50 @@
   </div>
 
   <script>
-    // Preset δεδομένα service intervals ανά μοντέλο (μπορείς να προσθέσεις περισσότερα)
-    const servicePresets = {
-      'Audi SQ2': {
-        oil: { km: 20000, months: 12 },
-        airFilter: { km: 40000, months: 24 },
-        cabinFilter: { km: 30000, months: 24 },
-        sparkPlugs: { km: 80000, months: 48 }
-      },
-      'Audi Q2': {
-        oil: { km: 15000, months: 12 },
-        airFilter: { km: 30000, months: 24 },
-        cabinFilter: { km: 30000, months: 24 },
-        sparkPlugs: { km: 60000, months: 48 }
-      },
-      'BMW X3': {
-        oil: { km: 18000, months: 12 },
-        airFilter: { km: 35000, months: 24 },
-        cabinFilter: { km: 25000, months: 24 },
-        sparkPlugs: { km: 70000, months: 48 }
-      },
-      // Προσθήκη περισσότερων μοντέλων εδώ...
-      'default': {
-        oil: { km: 15000, months: 12 },
-        airFilter: { km: 30000, months: 24 },
-        cabinFilter: { km: 30000, months: 24 },
-        sparkPlugs: { km: 60000, months: 48 }
-      }
+    // Δυναμικά μοντέλα ανά μάρκα
+    const modelsByBrand = {
+      'Audi': ['SQ2', 'Q2', 'A3', 'A4', 'Q3'],
+      'BMW': ['X3', '3 Series', '5 Series', 'X5', '1 Series'],
+      'Mercedes': ['C-Class', 'E-Class', 'GLC', 'A-Class', 'S-Class'],
+      'Toyota': ['Corolla', 'Camry', 'RAV4', 'Yaris', 'Prius'],
+      'Volkswagen': ['Golf', 'Passat', 'Tiguan', 'Polo', 'ID.3']
     };
 
-    // Ενημέρωση εικόνας και header βάσει επιλογής
+    // Preset δεδομένα service intervals ανά μοντέλο (προσάρμοσε/πρόσθεσε)
+    const servicePresets = {
+      'Audi SQ2': { oil: { km: 20000, months: 12 }, airFilter: { km: 40000, months: 24 }, cabinFilter: { km: 30000, months: 24 }, sparkPlugs: { km: 80000, months: 48 } },
+      'Audi Q2': { oil: { km: 15000, months: 12 }, airFilter: { km: 30000, months: 24 }, cabinFilter: { km: 30000, months: 24 }, sparkPlugs: { km: 60000, months: 48 } },
+      'Audi A3': { oil: { km: 15000, months: 12 }, airFilter: { km: 30000, months: 24 }, cabinFilter: { km: 20000, months: 24 }, sparkPlugs: { km: 60000, months: 48 } },
+      'BMW X3': { oil: { km: 18000, months: 12 }, airFilter: { km: 35000, months: 24 }, cabinFilter: { km: 25000, months: 24 }, sparkPlugs: { km: 70000, months: 48 } },
+      'BMW 3 Series': { oil: { km: 15000, months: 12 }, airFilter: { km: 30000, months: 24 }, cabinFilter: { km: 20000, months: 24 }, sparkPlugs: { km: 60000, months: 48 } },
+      'Mercedes C-Class': { oil: { km: 16000, months: 12 }, airFilter: { km: 32000, months: 24 }, cabinFilter: { km: 30000, months: 24 }, sparkPlugs: { km: 65000, months: 48 } },
+      'Toyota Corolla': { oil: { km: 10000, months: 12 }, airFilter: { km: 30000, months: 24 }, cabinFilter: { km: 20000, months: 24 }, sparkPlugs: { km: 100000, months: 60 } },
+      'Volkswagen Golf': { oil: { km: 15000, months: 12 }, airFilter: { km: 30000, months: 24 }, cabinFilter: { km: 30000, months: 24 }, sparkPlugs: { km: 60000, months: 48 } },
+      // Default για μη ορισμένα
+      'default': { oil: { km: 15000, months: 12 }, airFilter: { km: 30000, months: 24 }, cabinFilter: { km: 30000, months: 24 }, sparkPlugs: { km: 60000, months: 48 } }
+    };
+
+    // Γέμισμα μοντέλων βάσει μάρκας
+    function updateModels() {
+      const brand = document.getElementById('brand').value;
+      const modelSelect = document.getElementById('model');
+      modelSelect.innerHTML = ''; // Καθάρισε
+
+      const models = modelsByBrand[brand] || [];
+      models.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        modelSelect.appendChild(option);
+      });
+
+      // Επίλεξε πρώτο μοντέλο
+      if (models.length > 0) {
+        modelSelect.value = models[0];
+      }
+    }
+
+    // Ενημέρωση εικόνας, header και service intervals
     function updateVehicle() {
       const brand = document.getElementById('brand').value;
       const model = document.getElementById('model').value;
@@ -202,14 +209,16 @@
       // Ενημέρωση header
       document.getElementById('carDetails').textContent = `${brand} ${model} ${engine} - ${year}`;
 
-      // Αλλαγή εικόνας (προσάρμοσε URLs για άλλα μοντέλα)
-      let imageUrl = 'https://i.ibb.co/0jZ3QbY/audi-sq2-grey.png'; // Default SQ2 γκρι
-      if (model === 'Q2') {
-        imageUrl = 'https://i.ibb.co/4p7J2Qd/audi-q2-grey.png'; // Q2 από πριν
-      } else if (model === 'X3') {
-        imageUrl = 'https://i.ibb.co/placeholder/bmw-x3-grey.png'; // Placeholder - βάλε real URL
+      // Αλλαγή εικόνας (προσάρμοσε URLs - εδώ placeholders, βάλε real από ibb.co)
+      let imageUrl = 'https://via.placeholder.com/400x200?text=' + encodeURIComponent(`${brand} ${model}`); // Placeholder
+      if (brand === 'Audi' && model === 'SQ2') {
+        imageUrl = 'https://i.ibb.co/0jZ3QbY/audi-sq2-grey.png';
+      } else if (brand === 'Audi' && model === 'Q2') {
+        imageUrl = 'https://i.ibb.co/4p7J2Qd/audi-q2-grey.png';
+      } else if (brand === 'BMW' && model === 'X3') {
+        imageUrl = 'https://i.ibb.co/placeholder/bmw-x3-grey.png'; // Ανέβασε εικόνα και βάλε URL
       }
-      // Για άλλα, βάλε URLs από imgur/ibb.co
+      // Για άλλα, ανέβασε εικόνες σε ibb.co και ενημέρωσε εδώ
       document.getElementById('carImage').src = imageUrl;
       document.getElementById('carImage').alt = `${brand} ${model} Grey`;
 
@@ -218,17 +227,22 @@
       const presets = servicePresets[fullModel] || servicePresets['default'];
 
       const items = document.querySelectorAll('#serviceList li');
-      items[0].setAttribute('data-km', presets.oil.km);
-      items[0].setAttribute('data-months', presets.oil.months);
-      items[1].setAttribute('data-km', presets.airFilter.km);
-      items[1].setAttribute('data-months', presets.airFilter.months);
-      items[2].setAttribute('data-km', presets.cabinFilter.km);
-      items[2].setAttribute('data-months', presets.cabinFilter.months);
-      items[3].setAttribute('data-km', presets.sparkPlugs.km);
-      items[3].setAttribute('data-months', presets.sparkPlugs.months);
+      if (items.length >= 4) {
+        items[0].setAttribute('data-km', presets.oil.km);
+        items[0].setAttribute('data-months', presets.oil.months);
+        items[1].setAttribute('data-km', presets.airFilter.km);
+        items[1].setAttribute('data-months', presets.airFilter.months);
+        items[2].setAttribute('data-km', presets.cabinFilter.km);
+        items[2].setAttribute('data-months', presets.cabinFilter.months);
+        items[3].setAttribute('data-km', presets.sparkPlugs.km);
+        items[3].setAttribute('data-months', presets.sparkPlugs.months);
+      }
 
       // Αποθήκευση vehicle data
       localStorage.setItem('vehicleData', JSON.stringify({ brand, model, year, engine }));
+
+      // Ενημέρωση service list αμέσως (για να δείχνει τα νέα intervals)
+      updateService();
     }
 
     function updateService() {
@@ -251,11 +265,12 @@
         kteoDate: kteoDateStr
       }));
 
-      items.forEach(item => {
+      items.forEach((item, index) => {
         let task = item.getAttribute('data-task');
         let intervalKm = parseInt(item.getAttribute('data-km')) || 0;
         let intervalMonths = parseInt(item.getAttribute('data-months')) || 0;
         let nextDate;
+        let nextKm;
 
         // Ειδική Χειρισμός για Ασφάλεια και ΚΤΕΟ: Χρησιμοποίησε τα inputs απευθείας
         if (task === 'Ασφάλεια') {
@@ -266,7 +281,6 @@
           nextKm = 'N/A (Βάσει Χρόνου)';
         } else {
           // ΣΩΣΤΟΣ ΥΠΟΛΟΓΙΣΜΟΣ KM: Επόμενο πολλαπλάσιο interval
-          let nextKm;
           if (intervalKm > 0) {
             let cycles = Math.floor(currentKm / intervalKm);
             nextKm = (cycles + 1) * intervalKm;
@@ -298,7 +312,6 @@
 
         // Βασική Ειδοποίηση (αν <20 μέρες)
         if (daysToNext < 20 && daysToNext > 0) {
-          // Browser notification (αν επιτρέπεται)
           if (Notification.permission === 'granted') {
             new Notification(`${task}: Σε ${daysToNext} μέρες!`);
           } else {
@@ -310,6 +323,9 @@
 
     // Φόρτωση αποθηκευμένων δεδομένων στην αρχή
     window.onload = function() {
+      // Πρώτα ενημέρωσε models
+      updateModels();
+
       let savedCar = localStorage.getItem('carData');
       if (savedCar) {
         let data = JSON.parse(savedCar);
@@ -317,26 +333,4 @@
         document.getElementById('currentKm').value = data.currentKm || 10000;
         document.getElementById('monthlyKm').value = data.monthlyKm || 1000;
         document.getElementById('insuranceDate').value = data.insuranceDate || '2025-10-05';
-        document.getElementById('kteoDate').value = data.kteoDate || '2027-01-01';
-      }
-
-      let savedVehicle = localStorage.getItem('vehicleData');
-      if (savedVehicle) {
-        let data = JSON.parse(savedVehicle);
-        document.getElementById('brand').value = data.brand || 'Audi';
-        document.getElementById('model').value = data.model || 'SQ2';
-        document.getElementById('year').value = data.year || 2023;
-        document.getElementById('engine').value = data.engine || '2.0 TFSI';
-      }
-
-      updateVehicle(); // Αρχική ενημέρωση οχήματος
-      updateService(); // Αυτόματο update στην αρχή
-
-      // Ζήτα άδεια για notifications (προαιρετικά)
-      if (Notification.permission === 'default') {
-        Notification.requestPermission();
-      }
-    };
-  </script>
-</body>
-</html>
+        document.getElementById('kteoDate').
