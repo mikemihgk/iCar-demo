@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iCar - Audi Q2</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>iCar</h1>
+    <img src="https://i.ibb.co/4p7J2Qd/audi-q2-grey.png" alt="Audi Q2" class="car-image">
+    <h2>Audi Q2 1.0 TFSI - 2021</h2>
+    <label>Τρέχον Χλμ: <input type="number" id="currentKm" value="10000"></label>
+    <button onclick="updateService()">Υπολόγισε Επόμενο Service</button>
+    <ul id="serviceList">
+      <li data-km="15000" data-months="12">Λάδια κινητήρα</li>
+      <li data-km="30000" data-months="24">Φίλτρο αέρα</li>
+      <li data-km="30000" data-months="24">Φίλτρο καμπίνας</li>
+      <li data-km="60000" data-months="48">Μπουζί</li>
+    </ul>
+    <p class="signature">Developed by Mike</p>
+  </div>
+<script src="script.js"></script>
+</body>
+</html>
