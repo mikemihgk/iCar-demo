@@ -8,13 +8,15 @@ const modelOptions = {
   Peugeot: ["208","308","3008","2008"]
 };
 
+// --- Λίστα Service (με ΚΤΕΟ & Ασφάλεια) ---
 const serviceItems = [
   "Αλλαγή λαδιών", "Φίλτρο λαδιού", "Φίλτρο αέρα", "Φίλτρο καμπίνας",
   "Φίλτρο βενζίνης", "Υγρά φρένων", "Τακάκια", "Δίσκοι φρένων",
   "Ελαστικά", "Πίεση αέρα ελαστικών", "Αλλαγή ελαστικών",
   "Μπαταρία", "Υαλοκαθαριστήρες", "Ψυκτικό υγρό", "Ιμάντας χρονισμού",
   "Φώτα", "Στάθμη λαδιού", "Κλιματισμός", "Σύστημα διεύθυνσης",
-  "Αμορτισέρ", "Εξάτμιση", "Ανάρτηση", "Διαρροές λαδιού", "Σύστημα πέδησης"
+  "Αμορτισέρ", "Εξάτμιση", "Ανάρτηση", "Διαρροές λαδιού", "Σύστημα πέδησης",
+  "ΚΤΕΟ", "Ασφάλεια"
 ];
 
 // --- Φόρτωση μοντέλων ---
@@ -87,6 +89,10 @@ function loadVehicles() {
     div.dataset.key = key;
     div.textContent = `${v.brand} ${v.model} (${v.year})`;
     div.style.cursor = "pointer";
+    div.style.border = "1px solid #ccc";
+    div.style.padding = "6px";
+    div.style.marginBottom = "4px";
+    div.style.borderRadius = "6px";
     div.onclick = ()=>{ loadVehicle(key); };
     list.appendChild(div);
   });
@@ -107,12 +113,14 @@ function loadVehicle(key) {
   v.services.forEach((s,i)=>{
     const checkbox = items[i].querySelector("input[type='checkbox']");
     const note = items[i].querySelector("input[type='text']");
-    checkbox.checked = s.checked;
-    note.value = s.note;
-    items[i].classList.toggle("checked", s.checked);
+    if(s){
+      checkbox.checked = s.checked;
+      note.value = s.note;
+      items[i].classList.toggle("checked", checkbox.checked);
+    }
   });
 
-  // ενεργοποίηση κουμπιού
+  // ενεργοποίηση επιλογής
   document.querySelectorAll(".vehicle-item").forEach(el=>el.classList.remove("active"));
   document.querySelector(`.vehicle-item[data-key="${key}"]`).classList.add("active");
 }
