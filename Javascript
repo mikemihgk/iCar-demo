@@ -1,12 +1,21 @@
 function updateService() {
-  let currentKm = parseInt(document.getElementById('currentKm').value);
+  let currentKm = parseInt(document.getElementById('currentKm').value) || 0;
   let items = document.querySelectorAll('#serviceList li');
-  let now = new Date();
+
   items.forEach(item => {
-    let km = parseInt(item.getAttribute('data-km'));
-    let months = parseInt(item.getAttribute('data-months'));
-    let nextDate = new Date();
-    nextDate.setMonth(now.getMonth() + months);
-    item.innerHTML = `${item.textContent.split('-')[0]} - Επόμενο: ${currentKm + km} km ή ${nextDate.toLocaleDateString()}`;
+    let km = parseInt(item.getAttribute('data-km')) || 0;
+    let months = parseInt(item.getAttribute('data-months')) || 0;
+    let lastDateStr = item.getAttribute('data-last') || new Date().toISOString().split('T')[0];
+    let lastDate = new Date(lastDateStr);
+
+    // Υπολογισμός επόμενης ημερομηνίας service
+    let nextDate = new Date(lastDate);
+    nextDate.setMonth(nextDate.getMonth() + months);
+
+    // Υπολογισμός επόμενου km service
+    let nextKm = currentKm + km;
+
+    // Εμφάνιση στην λίστα
+    item.innerHTML = `${item.getAttribute('data-task')} - Επόμενο: ${nextKm} km ή ${nextDate.toLocaleDateString()}`;
   });
 }
