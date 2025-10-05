@@ -22,10 +22,13 @@ header {
   background: white;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 15px rgba(0,0,0,0.15);
 }
 
-h2 { color: #1976d2; margin-top: 30px; }
+h2 {
+  color: #1976d2;
+  margin-top: 30px;
+}
 
 label, select, input[type="text"], button {
   display: block;
@@ -48,7 +51,9 @@ button {
   cursor: pointer;
 }
 
-button:hover { background-color: #0d47a1; }
+button:hover {
+  background-color: #0d47a1;
+}
 
 .checkbox-item {
   display: flex;
@@ -61,32 +66,46 @@ button:hover { background-color: #0d47a1; }
   transition: background-color 0.3s;
 }
 
-.checkbox-item.checked { background-color: #c8e6c9; }
+.checkbox-item.checked {
+  background-color: #c8e6c9;
+}
 
-.checkbox-item input[type="text"] { width: 150px; margin-left: 10px; }
+.checkbox-item input[type="text"] {
+  width: 150px;
+  margin-left: 10px;
+}
 
 .vehicle-item {
-  display: flex;
-  justify-content: space-between;
   padding: 8px;
   border: 1px solid #ccc;
-  border-radius: 6px;
   margin: 5px 0;
+  border-radius: 6px;
   cursor: pointer;
+  position: relative;
 }
 
-.vehicle-item.active { background-color: #d1ecf1; }
+.vehicle-item.active {
+  background-color: #b3e5fc;
+  font-weight: bold;
+}
 
-.delete-btn {
-  background-color: red;
-  color: white;
+.vehicle-item button.delete {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: #f44336;
   border: none;
-  cursor: pointer;
-  padding: 5px;
+  color: white;
   border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.delete-btn:hover { background-color: darkred; }
+.vehicle-item button.delete:hover {
+  background: #d32f2f;
+}
 
 footer {
   text-align: center;
