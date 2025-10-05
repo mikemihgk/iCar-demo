@@ -35,8 +35,8 @@ h1 { color: #007bff; margin-bottom: 10px; font-size: 2em; text-shadow: 0 2px 4px
 h2 { color: #555; font-size: 1.2em; margin-bottom: 20px; font-weight: 400;}
 input, select { width: 100%; padding: 12px; margin: 8px 0 18px 0; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; transition: border-color 0.3s; font-size: 1em;}
 input:focus, select:focus { border-color: #007bff; outline: none; box-shadow: 0 0 8px rgba(0,123,255,0.2);}
-input[type="date"], input[type="number"] { width: 48%; display: inline-block; margin-right: 4%;}
-input[type="date"]:last-child, input[type="number"]:last-child { margin-right: 0;}
+input[type="date"] { width: 48%; display: inline-block; margin-right: 4%;}
+input[type="date"]:last-child { margin-right: 0;}
 input.note { width: 45%; display: inline-block; margin-left: 5%; font-size: 0.9em;}
 button { background: linear-gradient(135deg, #007bff, #0056b3); color: #fff; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; margin: 10px 5px 0 0; transition: transform 0.2s, box-shadow 0.3s; font-size: 1em; font-weight: 500;}
 button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,123,255,0.3);}
@@ -53,6 +53,7 @@ h3.section-title::after { content: '⚙️'; margin-left: 8px; font-size: 1.2em;
 #savedVehicles button { background: linear-gradient(135deg, #6c757d, #495057); margin: 5px; padding: 8px 12px; font-size: 0.9em;}
 #savedVehicles button:hover { background: linear-gradient(135deg, #5a6268, #383f45);}
 .car-image { width: 100%; max-width: 300px; height: auto; border-radius: 10px; margin: 10px auto; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
+#serviceHistory { margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 10px; text-align: left; font-size: 0.9em; color: #007bff; border-left: 4px solid #007bff;}
 </style>
 </head>
 <body>
@@ -112,13 +113,13 @@ h3.section-title::after { content: '⚙️'; margin-left: 8px; font-size: 1.2em;
 <h3 class="section-title">Ασφάλεια</h3>
 <ul id="safetyChecks"></ul>
 
-<div class="signature">Created by MikeMigk</div>
+<div class="signature">Create by MikeMigk</div>
 </div>
 
 <script>
 const modelsByBrand = {
 "Smart":["Fortwo","Forfour"],
-"Audi":["A1","A3","A4","A6","Q2","Q3","Q5","Q7"],
+"Audi":["A1","A3","A4","A6","Q3","Q5","Q7"],
 "BMW":["X1","X3","X5","3 Series","5 Series"],
 "Mercedes":["A-Class","C-Class","E-Class","GLA","GLE"],
 "Toyota":["Yaris","Corolla","RAV4","Hilux"],
@@ -141,11 +142,14 @@ const modelSelect = document.getElementById("model");
 modelSelect.innerHTML = '';
 if(modelsByBrand[brand]){
 modelsByBrand[brand].forEach(m=>{
-let opt=document.createElement('option'); opt.value=m; opt.textContent=m;
+let opt=document.createElement('option');
+opt.value=m; opt.textContent=m;
 modelSelect.appendChild(opt);
 });
-}else{
-let opt=document.createElement('option'); opt.textContent="Δεν υπάρχουν διαθέσιμα"; modelSelect.appendChild(opt);
+} else {
+let opt=document.createElement('option');
+opt.textContent="Δεν υπάρχουν διαθέσιμα";
+modelSelect.appendChild(opt);
 }
 }
 
@@ -197,7 +201,7 @@ safety.appendChild(li);
 }
 populateChecks();
 
-// Save/load vehicle
+// Save vehicle data
 function saveVehicle(){
 const brand=document.getElementById("brand").value;
 const model=document.getElementById("model").value;
@@ -219,90 +223,12 @@ let vehicles=JSON.parse(localStorage.getItem("vehicles")||"[]");
 vehicles.forEach((v,i)=>{
 const btn=document.createElement("button");
 btn.textContent=`${v.brand} ${v.model} (${v.year})`;
-btn.onclick=()=>{
-document.getElementById("brand").value=v.brand;
-updateModels();
-document.getElementById("model").value=v.model;
-document.getElementById("year").value=v.year;
-document.getElementById("engine").value=v.engine;
-alert(`Φόρτωσε το όχημα ${v.brand} ${v.model}`);}
+btn.onclick=()=>{alert(JSON.stringify(v,null,2));};
 div.appendChild(btn);
 });
 }
 displaySavedVehicles();
 
-// Save/load service & checklists
-function updateService(){
-const serviceData = {
-lastServiceDate: document.getElementById("lastServiceDate").value,
-currentKm: document.getElementById("currentKm").value,
-monthlyKm: document.getElementById("monthlyKm").value,
-insuranceDate: document.getElementById("insuranceDate").value,
-kteoDate: document.getElementById("kteoDate").value,
-engineChecks: [],
-tireChecks: [],
-safetyChecks: []
-};
-document.querySelectorAll("#engineChecks li").forEach((li,i)=>{
-serviceData.engineChecks.push({checked: li.querySelector("input[type=checkbox]").checked, note: li.querySelector("input.note").value});
-});
-document.querySelectorAll("#tireChecks li").forEach((li,i)=>{
-serviceData.tireChecks.push({checked: li.querySelector("input[type=checkbox]").checked, note: li.querySelector("input.note").value});
-});
-document.querySelectorAll("#safetyChecks li").forEach((li,i)=>{
-serviceData.safetyChecks.push({checked: li.querySelector("input[type=checkbox]").checked, note: li.querySelector("input.note").value});
-});
-localStorage.setItem("serviceData", JSON.stringify(serviceData));
-alert("Service και checklists αποθηκεύτηκαν!");
-}
-
-function loadService(){
-const serviceData=JSON.parse(localStorage.getItem("serviceData")||"{}");
-if(!serviceData) return;
-document.getElementById("lastServiceDate").value=serviceData.lastServiceDate||"";
-document.getElementById("currentKm").value=serviceData.currentKm||"";
-document.getElementById("monthlyKm").value=serviceData.monthlyKm||"";
-document.getElementById("insuranceDate").value=serviceData.insuranceDate||"";
-document.getElementById("kteoDate").value=serviceData.kteoDate||"";
-
-if(serviceData.engineChecks){
-serviceData.engineChecks.forEach((item,i)=>{
-const li=document.querySelectorAll("#engineChecks li")[i];
-if(li){
-li.querySelector("input[type=checkbox]").checked=item.checked;
-li.querySelector("input.note").value=item.note;
-if(item.checked) li.classList.add("checked");
-});
-}
-if(serviceData.tireChecks){
-serviceData.tireChecks.forEach((item,i)=>{
-const li=document.querySelectorAll("#tireChecks li")[i];
-if(li){
-li.querySelector("input[type=checkbox]").checked=item.checked;
-li.querySelector("input.note").value=item.note;
-if(item.checked) li.classList.add("checked");
-});
-}
-if(serviceData.safetyChecks){
-serviceData.safetyChecks.forEach((item,i)=>{
-const li=document.querySelectorAll("#safetyChecks li")[i];
-if(li){
-li.querySelector("input[type=checkbox]").checked=item.checked;
-li.querySelector("input.note").value=item.note;
-if(item.checked) li.classList.add("checked");
-});
-}
-}
-
-// Checkbox toggle class
-document.querySelectorAll("input[type=checkbox]").forEach(ch=>{
-ch.addEventListener("change",e=>{
-if(ch.checked) ch.parentElement.classList.add("checked");
-else ch.parentElement.classList.remove("checked");
-});
-});
-
-loadService();
 </script>
 </body>
 </html>
