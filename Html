@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iCar - Audi Q2</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCar Audi Q2</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>iCar</h1>
-    <img src="https://i.ibb.co/4p7J2Qd/audi-q2-grey.png" alt="Audi Q2" class="car-image">
-    <h2>Audi Q2 1.0 TFSI - 2021</h2>
-    <label>Τρέχον Χλμ: <input type="number" id="currentKm" value="10000"></label>
-    <button onclick="updateService()">Υπολόγισε Επόμενο Service</button>
+    <h1>iCar Audi Q2 - Service Plan</h1>
+    
+    <label for="currentKm">Τρέχον χιλιόμετρα:</label>
+    <input type="number" id="currentKm" value="10000">
+    <button onclick="updateService()">Ενημέρωση Service</button>
+    
     <ul id="serviceList">
-      <li data-km="15000" data-months="12">Λάδια κινητήρα</li>
-      <li data-km="30000" data-months="24">Φίλτρο αέρα</li>
-      <li data-km="30000" data-months="24">Φίλτρο καμπίνας</li>
-      <li data-km="60000" data-months="48">Μπουζί</li>
+        <li data-task="Λάδια κινητήρα" data-km="15000" data-months="12" data-last="2025-01-01"></li>
+        <li data-task="Φίλτρο αέρα" data-km="30000" data-months="24" data-last="2025-01-01"></li>
+        <li data-task="Φίλτρο καμπίνας" data-km="30000" data-months="24" data-last="2025-01-01"></li>
+        <li data-task="Μπουζί" data-km="60000" data-months="48" data-last="2025-01-01"></li>
     </ul>
-    <p class="signature">Developed by Mike</p>
-  </div>
-<script src="script.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
