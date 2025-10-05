@@ -1,8 +1,31 @@
-body { font-family: -apple-system, sans-serif; background: #fff; color: #111; text-align:center; }
-.container { padding: 20px; }
-.car-image { width: 250px; margin: 10px 0; }
-input { width: 80px; }
-button { margin: 10px; padding: 8px 15px; font-size:16px; }
-.signature { margin-top:20px; font-size:12px; color:#888; }
-ul { list-style: none; padding:0; }
-li { margin: 10px 0; }
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+h1 {
+    color: #333;
+}
+
+input {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+button {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+ul {
+    margin-top: 20px;
+}
+
+li {
+    margin-bottom: 10px;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
