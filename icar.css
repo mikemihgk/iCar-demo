@@ -25,10 +25,7 @@ header {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-h2 {
-  color: #1976d2;
-  margin-top: 30px;
-}
+h2 { color: #1976d2; margin-top: 30px; }
 
 label, select, input[type="text"], button {
   display: block;
@@ -51,22 +48,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #0d47a1;
-}
-
-.vehicle-item {
-  padding: 8px;
-  margin: 5px 0;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.vehicle-item.active {
-  background-color: #4CAF50;
-  color: white;
-}
+button:hover { background-color: #0d47a1; }
 
 .checkbox-item {
   display: flex;
@@ -79,14 +61,32 @@ button:hover {
   transition: background-color 0.3s;
 }
 
-.checkbox-item.checked {
-  background-color: #c8e6c9;
+.checkbox-item.checked { background-color: #c8e6c9; }
+
+.checkbox-item input[type="text"] { width: 150px; margin-left: 10px; }
+
+.vehicle-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin: 5px 0;
+  cursor: pointer;
 }
 
-.checkbox-item input[type="text"] {
-  width: 150px;
-  margin-left: 10px;
+.vehicle-item.active { background-color: #d1ecf1; }
+
+.delete-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
 }
+
+.delete-btn:hover { background-color: darkred; }
 
 footer {
   text-align: center;
