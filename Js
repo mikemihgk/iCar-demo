@@ -17,4 +17,5 @@ function updateService() {
 
     // Εμφάνιση στην λίστα
     item.innerHTML = `${item.getAttribute('data-task')} - Επόμενο: ${nextKm} km ή ${nextDate.toLocaleDateString()}`;
+  });
 }
