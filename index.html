@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -173,7 +174,7 @@
 <body>
   <div class="container">
     <h1>🚗 iCar</h1>
-    <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Car Image" class="car-image" style="display: none;"> <!-- Κρυφή εικόνα, εμφανίζεται δυναμικά -->
+    <img id="carImage" src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Car Image" class="car-image" style="display: none;"> <!-- Κρυφή εικόνα, εμφανίζεται δυναμικά -->
     <h2 id="carDetails">Επιλέξτε όχημα για να ξεκινήσετε</h2>
 
     <!-- Επιλογή Οχήματος -->
@@ -200,11 +201,11 @@
         <option value="Skoda">Skoda</option>
       </select>
       <label for="model">Μοντέλο:</label>
-      <select id="model" disabled></select>
+      <select id="model"></select>
       <label for="year">Χρονολογία:</label>
-      <input type="number" id="year" value="2021" min="1995" max="2035" disabled>
+      <input type="number" id="year" value="2021" min="1995" max="2035">
       <label for="engine">Μηχανή:</label>
-      <input type="text" id="engine" value="1.0" disabled>
+      <input type="text" id="engine" value="1.0">
       <button onclick="saveVehicle()">💾 Αποθήκευση Οχήματος & Ιστορικού</button>
     </div>
     <div id="savedVehicles"></div>
@@ -212,55 +213,46 @@
     <!-- Πληροφορίες Συντήρησης -->
     <h3 class="section-title">Πληροφορίες Συντήρησης</h3>
     <label for="lastServiceDate">Ημερομηνία Τελευταίου Service:</label>
-    <input type="date" id="lastServiceDate" value="2025-01-01" disabled>
+    <input type="date" id="lastServiceDate" value="2025-01-01">
     <label for="currentKm">Τρέχον Χιλιομετρητή:</label>
-    <input type="number" id="currentKm" value="10000" disabled>
+    <input type="number" id="currentKm" value="10000">
     <label for="monthlyKm">Περίπου Km/Μήνα:</label>
-    <input type="number" id="monthlyKm" value="1000" disabled>
+    <input type="number" id="monthlyKm" value="1000">
     <label for="insuranceDate">Ημερομηνία Λήξης Ασφάλειας:</label>
-    <input type="date" id="insuranceDate" value="2025-10-05" disabled>
+    <input type="date" id="insuranceDate" value="2025-10-05">
     <label for="kteoDate">Ημερομηνία Επόμενου ΚΤΕΟ:</label>
-    <input type="date" id="kteoDate" value="2027-01-01" disabled>
+    <input type="date" id="kteoDate" value="2027-01-01">
     <button onclick="updateService()">🔧 Ενημέρωση Service</button>
 
     <!-- Κινητήρας -->
     <h3 class="section-title">Κινητήρας</h3>
     <ul id="engineChecks">
-      <li><input type="checkbox" data-section="engine" data-index="0"><span>Αλλαγή λαδιών κινητήρα</span><input class="note" type="text" data-section="engine" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="1"><span>Φίλτρο λαδιού</span><input class="note" type="text" data-section="engine" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="2"><span>Φίλτρο αέρα</span><input class="note" type="text" data-section="engine" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="3"><span>Μπουζί</span><input class="note" type="text" data-section="engine" data-index="3" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="4"><span>Ψυκτικό υγρό / Αντιψυκτικό</span><input class="note" type="text" data-section="engine" data-index="4" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="5"><span>Υγρά φρένων</span><input class="note" type="text" data-section="engine" data-index="5" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="6"><span>Έλεγχος ιμάντα χρονισμού</span><input class="note" type="text" data-section="engine" data-index="6" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="7"><span>Έλεγχος ιμάντα αξεσουάρ</span><input class="note" type="text" data-section="engine" data-index="7" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="engine" data-index="8"><span>Έλεγχος turbo / supercharger</span><input class="note" type="text" data-section="engine" data-index="8" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="0"><span>Αλλαγή λαδιών κινητήρα (προτείνεται κάθε 15.000 km ή 12 μήνες)</span><input class="note" type="text" data-section="engine" data-index="0" placeholder="Π.χ. 2025-01-15 / 15.000 km"></li>
+      <li><input type="checkbox" data-section="engine" data-index="1"><span>Φίλτρο λαδιού (προτείνεται μαζί με αλλαγή λαδιών)</span><input class="note" type="text" data-section="engine" data-index="1" placeholder="Π.χ. 2025-01-15 / Μαζί με λάδια"></li>
+      <li><input type="checkbox" data-section="engine" data-index="2"><span>Φίλτρο αέρα (προτείνεται κάθε 30.000 km ή 24 μήνες)</span><input class="note" type="text" data-section="engine" data-index="2" placeholder="Π.χ. 2026-01-01 / 30.000 km"></li>
+      <li><input type="checkbox" data-section="engine" data-index="3"><span>Μπουζί (προτείνεται κάθε 60.000 km ή 48 μήνες)</span><input class="note" type="text" data-section="engine" data-index="3" placeholder="Π.χ. 2028-01-01 / 60.000 km"></li>
+      <li><input type="checkbox" data-section="engine" data-index="4"><span>Ψυκτικό υγρό / Αντιψυκτικό (προτείνεται κάθε 50.000 km ή 5 χρόνια)</span><input class="note" type="text" data-section="engine" data-index="4" placeholder="Π.χ. 2030-01-01 / 50.000 km"></li>
+      <li><input type="checkbox" data-section="engine" data-index="5"><span>Υγρά φρένων (προτείνεται κάθε 2 χρόνια ή 40.000 km)</span><input class="note" type="text" data-section="engine" data-index="5" placeholder="Π.χ. 2027-01-01 / 40.000 km"></li>
+      <li><input type="checkbox" data-section="engine" data-index="6"><span>Έλεγχος ιμάντα χρονισμού (προτείνεται κάθε 100.000 km ή 5-10 χρόνια)</span><input class="note" type="text" data-section="engine" data-index="6" placeholder="Π.χ. 2030-01-01 / 100.000 km"></li>
+      <li><input type="checkbox" data-section="engine" data-index="7"><span>Έλεγχος ιμάντα αξεσουάρ (προτείνεται κάθε 60.000 km ή 4 χρόνια)</span><input class="note" type="text" data-section="engine" data-index="7" placeholder="Π.χ. 2028-01-01 / 60.000 km"></li>
+      <li><input type="checkbox" data-section="engine" data-index="8"><span>Έλεγχος turbo / supercharger (προτείνεται κάθε service ή 20.000 km)</span><input class="note" type="text" data-section="engine" data-index="8" placeholder="Π.χ. 2025-07-01 / 20.000 km"></li>
     </ul>
 
     <!-- Ελαστικά -->
     <h3 class="section-title">Ελαστικά</h3>
     <ul id="tireChecks">
-      <li><input type="checkbox" data-section="tires" data-index="0"><span>Έλεγχος πίεσης ελαστικών</span><input class="note" type="text" data-section="tires" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="tires" data-index="1"><span>Ημερομηνία αλλαγής ελαστικών</span><input class="note" type="text" data-section="tires" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="tires" data-index="2"><span>Έλεγχος φθοράς πέλματος</span><input class="note" type="text" data-section="tires" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="tires" data-index="3"><span>Ζυγοστάθμιση / Ευθυγράμμιση</span><input class="note" type="text" data-section="tires" data-index="3" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="tires" data-index="0"><span>Έλεγχος πίεσης ελαστικών (προτείνεται μηνιαίως ή πριν ταξίδι)</span><input class="note" type="text" data-section="tires" data-index="0" placeholder="Π.χ. 2025-02-01 / OK"></li>
+      <li><input type="checkbox" data-section="tires" data-index="1"><span>Ημερομηνία αλλαγής ελαστικών (προτείνεται εποχιακά, καλοκαίρι/χειμώνας)</span><input class="note" type="text" data-section="tires" data-index="1" placeholder="Π.χ. 2025-10-01 / Καλοκαιρινά"></li>
+      <li><input type="checkbox" data-section="tires" data-index="2"><span>Έλεγχος φθοράς πέλματος (προτείνεται κάθε 10.000 km)</span><input class="note" type="text" data-section="tires" data-index="2" placeholder="Π.χ. 2025-04-01 / 4mm"></li>
+      <li><input type="checkbox" data-section="tires" data-index="3"><span>Ζυγοστάθμιση / Ευθυγράμμιση (προτείνεται κάθε αλλαγή ελαστικών ή 20.000 km)</span><input class="note" type="text" data-section="tires" data-index="3" placeholder="Π.χ. 2025-10-01 / OK"></li>
     </ul>
 
     <!-- Ασφάλεια -->
     <h3 class="section-title">Ασφάλεια</h3>
     <ul id="safetyChecks">
-      <li><input type="checkbox" data-section="safety" data-index="0"><span>Φρένα (δίσκοι/τακάκια)</span><input class="note" type="text" data-section="safety" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="safety" data-index="1"><span>Υαλοκαθαριστήρες</span><input class="note" type="text" data-section="safety" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="safety" data-index="2"><span>Φώτα εμπρός/πίσω</span><input class="note" type="text" data-section="safety" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="safety" data-index="3"><span>Μπαταρία / Τάση</span><input class="note" type="text" data-section="safety" data-index="3" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="safety" data-index="4"><span>Σύστημα ABS / ESP</span><input class="note" type="text" data-section="safety" data-index="4" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="safety" data-index="5"><span>Ζώνες ασφαλείας εμπρός / πίσω</span><input class="note" type="text" data-section="safety" data-index="5" placeholder="Ημερομηνία / Σημείωση"></li>
-    </ul>
-
-    <!-- Εσωτερικό / Άνεση -->
-    <h3 class="section-title">Εσωτερικό / Άνεση</h3>
-    <ul id="interiorChecks">
-      <li><input type="checkbox" data-section="interior" data-index="0"><span>Φίλτρο καμπίνας</span><input class="note" type="text" data-section="interior" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="interior" data-index="1"><span>Κλιματισμός - A/C</span><input class="note" type="text" data-section="interior" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox" data-section="interior" data-index="2"><span>Συστήματα ειδοποίησης / σέρβις ενδείξεις</span><input class="note" type="text" data-section="interior" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li
+      <li><input type="checkbox" data-section="safety" data-index="0"><span>Φρένα (δίσκοι/τακάκια) (προτείνεται κάθε 30.000 km ή 2 χρόνια)</span><input class="note" type="text" data-section="safety" data-index="0" placeholder="Π.χ. 2026-01-01 / 30.000 km"></li>
+      <li><input type="checkbox" data-section="safety" data-index="1"><span>Υαλοκαθαριστήρες (προτείνεται ετήσια αντικατάσταση)</span><input class="note" type="text" data-section="safety" data-index="1" placeholder="Π.χ. 2025-09-01 / Αντικαταστάθηκαν"></li>
+      <li><input type="checkbox" data-section="safety" data-index="2"><span>Φώτα εμπρός/πίσω (προτείνεται έλεγχος μηνιαίως)</span><input class="note" type="text" data-section="safety" data-index="2" placeholder="Π.χ. 2025-02-01 / OK"></li>
+      <li><input type="checkbox" data-section="safety" data-index="3"><span>Μπαταρία / Τάση (προτείνεται έλεγχος ετήσιος ή κάθε 3 χρόνια αντικατάσταση)</span><input class="note" type="text" data-section="safety" data-index="3" placeholder="Π.χ. 2026-01-01 / 12.6V"></li>
+      <li><input type="checkbox" data-section="safety" data-index="4"><span>Σύστημα ABS / ESP (προτείνεται έλεγχος στο service)</span><input class="note" type="text" data-section="safety" data-index="4" placeholder="Π.χ. 2025-01-01 / OK"></li>
+      <li><input type="checkbox" data-section
