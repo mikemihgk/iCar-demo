@@ -6,43 +6,174 @@
   <title>🚗 iCar</title>
   <style>
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #2a2a72, #009ffd);
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9); /* Απαλά μπλε χρώματα για πιο ήρεμο look */
       color: #333;
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
     }
     .container {
       background-color: #fff;
-      border-radius: 15px;
-      padding: 25px;
-      max-width: 600px;
+      border-radius: 20px; /* Πιο στρογγυλεμένα */
+      padding: 30px;
+      max-width: 650px;
       margin: 0 auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1); /* Μαλακότερη σκιά */
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    h1 { color: #007bff; margin-bottom: 10px; }
-    h2 { color: #444; font-size: 1.1em; margin-bottom: 20px; }
-    input, select { width: 100%; padding: 10px; margin: 5px 0 15px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-    input[type="date"] { width: 45%; display: inline-block; }
-    input.note { width: 50%; display: inline-block; }
-    button { background-color: #007bff; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-    button:hover { background-color: #0056b3; }
-    ul { list-style: none; padding: 0; text-align: left; }
-    li { background-color: #f9f9f9; border-radius: 8px; margin-bottom: 6px; border: 1px solid #ddd; display: flex; align-items: center; padding: 6px; font-size: 0.92em; gap: 8px; flex-wrap: wrap; transition: 0.3s; }
-    li.checked { background-color: #c6f6c6 !important; }
-    li input[type="checkbox"] { flex-shrink: 0; width: 18px; height: 18px; }
-    li span { flex-grow: 1; }
-    h3.section-title { color: #007bff; border-bottom: 1px solid #ddd; padding-bottom: 3px; margin-top: 25px; text-align: left; }
-    .signature { margin-top: 20px; font-size: 0.8em; color: #666; text-align: center; }
-    #savedVehicles { margin-top: 15px; text-align: left; }
-    #savedVehicles button { background-color: #555; margin-right: 5px; margin-bottom: 5px; color: #fff; }
-    #savedVehicles button:hover { background-color: #222; }
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #007bff, #00c6ff); /* Γραμμή χρώματος πάνω */
+    }
+    h1 { 
+      color: #007bff; 
+      margin-bottom: 10px; 
+      font-size: 2em;
+      text-shadow: 0 2px 4px rgba(0,123,255,0.1); /* Μαλακή σκιά */
+    }
+    h2 { 
+      color: #555; 
+      font-size: 1.2em; 
+      margin-bottom: 20px; 
+      font-weight: 400;
+    }
+    input, select { 
+      width: 100%; 
+      padding: 12px; 
+      margin: 8px 0 18px 0; 
+      border: 2px solid #e0e0e0; /* Μαλακότερο border */
+      border-radius: 8px; 
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+      font-size: 1em;
+    }
+    input:focus, select:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,123,255,0.2);
+    }
+    input[type="date"] { width: 48%; display: inline-block; margin-right: 4%; }
+    input[type="date"]:last-child { margin-right: 0; }
+    input.note { 
+      width: 45%; 
+      display: inline-block; 
+      margin-left: 5%;
+      font-size: 0.9em;
+    }
+    button { 
+      background: linear-gradient(135deg, #007bff, #0056b3); /* Gradient για buttons */
+      color: #fff; 
+      padding: 12px 20px; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      margin: 10px 5px 0 0;
+      transition: transform 0.2s, box-shadow 0.3s;
+      font-size: 1em;
+      font-weight: 500;
+    }
+    button:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+    }
+    button:active { transform: translateY(0); }
+    ul { 
+      list-style: none; 
+      padding: 0; 
+      text-align: left; 
+      margin-top: 10px;
+    }
+    li { 
+      background-color: #f8f9fa; /* Απαλό γκρι */
+      border-radius: 10px; 
+      margin-bottom: 8px; 
+      border: 1px solid #e9ecef;
+      display: flex; 
+      align-items: center; 
+      padding: 12px; 
+      font-size: 0.95em; 
+      gap: 10px; 
+      flex-wrap: wrap; 
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Μαλακή σκιά */
+    }
+    li.checked { 
+      background: linear-gradient(135deg, #d4edda, #c3e6cb) !important; /* Πράσινο gradient για checked */
+      border-color: #28a745;
+      box-shadow: 0 4px 8px rgba(40,167,69,0.2);
+    }
+    li input[type="checkbox"] { 
+      flex-shrink: 0; 
+      width: 20px; 
+      height: 20px; 
+      accent-color: #007bff; /* Μπλε checkbox */
+    }
+    li span { 
+      flex-grow: 1; 
+      font-weight: 500;
+      color: #495057;
+    }
+    h3.section-title { 
+      color: #007bff; 
+      border-bottom: 2px solid #e3f2fd; /* Απαλή γραμμή */
+      padding-bottom: 5px; 
+      margin: 25px 0 15px 0; 
+      text-align: left; 
+      font-size: 1.1em;
+      position: relative;
+    }
+    h3.section-title::after {
+      content: '⚙️'; /* Icon για sections */
+      margin-left: 8px;
+      font-size: 1.2em;
+    }
+    .signature { 
+      margin-top: 30px; 
+      font-size: 0.85em; 
+      color: #6c757d; 
+      text-align: center; 
+      padding-top: 15px;
+      border-top: 1px solid #e9ecef;
+    }
+    #savedVehicles { 
+      margin-top: 15px; 
+      text-align: left; 
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+    #savedVehicles button { 
+      background: linear-gradient(135deg, #6c757d, #495057); 
+      margin: 5px; 
+      padding: 8px 12px;
+      font-size: 0.9em;
+    }
+    #savedVehicles button:hover { 
+      background: linear-gradient(135deg, #5a6268, #383f45);
+    }
+    .car-image {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      border-radius: 10px;
+      margin: 10px auto;
+      display: block;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🚗 iCar</h1>
+    <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Car Image" class="car-image" style="display: none;"> <!-- Κρυφή εικόνα, εμφανίζεται δυναμικά -->
     <h2 id="carDetails">Επιλέξτε όχημα για να ξεκινήσετε</h2>
 
     <!-- Επιλογή Οχήματος -->
@@ -50,155 +181,86 @@
       <h3 class="section-title">Επιλογή Οχήματος</h3>
       <label for="brand">Μάρκα:</label>
       <select id="brand" onchange="updateModels();">
+        <option value="">Επιλέξτε Μάρκα</option>
         <option value="Smart">Smart</option>
         <option value="Audi">Audi</option>
+        <option value="BMW">BMW</option>
+        <option value="Mercedes">Mercedes</option>
         <option value="Toyota">Toyota</option>
         <option value="Volkswagen">Volkswagen</option>
-        <option value="BMW">BMW</option>
+        <option value="Ford">Ford</option>
+        <option value="Honda">Honda</option>
+        <option value="Hyundai">Hyundai</option>
+        <option value="Kia">Kia</option>
+        <option value="Nissan">Nissan</option>
+        <option value="Opel">Opel</option>
+        <option value="Peugeot">Peugeot</option>
+        <option value="Renault">Renault</option>
+        <option value="Seat">Seat</option>
+        <option value="Skoda">Skoda</option>
       </select>
       <label for="model">Μοντέλο:</label>
-      <select id="model"></select>
+      <select id="model" disabled></select>
       <label for="year">Χρονολογία:</label>
-      <input type="number" id="year" value="2021" min="1995" max="2035">
+      <input type="number" id="year" value="2021" min="1995" max="2035" disabled>
       <label for="engine">Μηχανή:</label>
-      <input type="text" id="engine" value="1.0">
-      <button onclick="saveVehicle()">💾 Αποθήκευση Οχήματος</button>
+      <input type="text" id="engine" value="1.0" disabled>
+      <button onclick="saveVehicle()">💾 Αποθήκευση Οχήματος & Ιστορικού</button>
     </div>
     <div id="savedVehicles"></div>
 
     <!-- Πληροφορίες Συντήρησης -->
     <h3 class="section-title">Πληροφορίες Συντήρησης</h3>
     <label for="lastServiceDate">Ημερομηνία Τελευταίου Service:</label>
-    <input type="date" id="lastServiceDate" value="2025-01-01">
+    <input type="date" id="lastServiceDate" value="2025-01-01" disabled>
     <label for="currentKm">Τρέχον Χιλιομετρητή:</label>
-    <input type="number" id="currentKm" value="10000">
+    <input type="number" id="currentKm" value="10000" disabled>
     <label for="monthlyKm">Περίπου Km/Μήνα:</label>
-    <input type="number" id="monthlyKm" value="1000">
+    <input type="number" id="monthlyKm" value="1000" disabled>
     <label for="insuranceDate">Ημερομηνία Λήξης Ασφάλειας:</label>
-    <input type="date" id="insuranceDate" value="2025-10-05">
+    <input type="date" id="insuranceDate" value="2025-10-05" disabled>
     <label for="kteoDate">Ημερομηνία Επόμενου ΚΤΕΟ:</label>
-    <input type="date" id="kteoDate" value="2027-01-01">
+    <input type="date" id="kteoDate" value="2027-01-01" disabled>
     <button onclick="updateService()">🔧 Ενημέρωση Service</button>
 
     <!-- Κινητήρας -->
     <h3 class="section-title">Κινητήρας</h3>
     <ul id="engineChecks">
-      <li><input type="checkbox"><span>Αλλαγή λαδιών κινητήρα</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Φίλτρο λαδιού</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Φίλτρο αέρα</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Μπουζί</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Ψυκτικό υγρό / Αντιψυκτικό</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Υγρά φρένων</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Έλεγχος ιμάντα χρονισμού</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Έλεγχος ιμάντα αξεσουάρ</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Έλεγχος turbo / supercharger</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="0"><span>Αλλαγή λαδιών κινητήρα</span><input class="note" type="text" data-section="engine" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="1"><span>Φίλτρο λαδιού</span><input class="note" type="text" data-section="engine" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="2"><span>Φίλτρο αέρα</span><input class="note" type="text" data-section="engine" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="3"><span>Μπουζί</span><input class="note" type="text" data-section="engine" data-index="3" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="4"><span>Ψυκτικό υγρό / Αντιψυκτικό</span><input class="note" type="text" data-section="engine" data-index="4" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="5"><span>Υγρά φρένων</span><input class="note" type="text" data-section="engine" data-index="5" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="6"><span>Έλεγχος ιμάντα χρονισμού</span><input class="note" type="text" data-section="engine" data-index="6" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="7"><span>Έλεγχος ιμάντα αξεσουάρ</span><input class="note" type="text" data-section="engine" data-index="7" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="engine" data-index="8"><span>Έλεγχος turbo / supercharger</span><input class="note" type="text" data-section="engine" data-index="8" placeholder="Ημερομηνία / Σημείωση"></li>
     </ul>
 
     <!-- Ελαστικά -->
     <h3 class="section-title">Ελαστικά</h3>
     <ul id="tireChecks">
-      <li><input type="checkbox"><span>Έλεγχος πίεσης ελαστικών</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Ημερομηνία αλλαγής ελαστικών</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Έλεγχος φθοράς πέλματος</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Ζυγοστάθμιση / Ευθυγράμμιση</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="tires" data-index="0"><span>Έλεγχος πίεσης ελαστικών</span><input class="note" type="text" data-section="tires" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="tires" data-index="1"><span>Ημερομηνία αλλαγής ελαστικών</span><input class="note" type="text" data-section="tires" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="tires" data-index="2"><span>Έλεγχος φθοράς πέλματος</span><input class="note" type="text" data-section="tires" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="tires" data-index="3"><span>Ζυγοστάθμιση / Ευθυγράμμιση</span><input class="note" type="text" data-section="tires" data-index="3" placeholder="Ημερομηνία / Σημείωση"></li>
     </ul>
 
     <!-- Ασφάλεια -->
     <h3 class="section-title">Ασφάλεια</h3>
     <ul id="safetyChecks">
-      <li><input type="checkbox"><span>Φρένα (δίσκοι/τακάκια)</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Υαλοκαθαριστήρες</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Φώτα εμπρός/πίσω</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Μπαταρία / Τάση</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Σύστημα ABS / ESP</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Ζώνες ασφαλείας εμπρός / πίσω</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="safety" data-index="0"><span>Φρένα (δίσκοι/τακάκια)</span><input class="note" type="text" data-section="safety" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="safety" data-index="1"><span>Υαλοκαθαριστήρες</span><input class="note" type="text" data-section="safety" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="safety" data-index="2"><span>Φώτα εμπρός/πίσω</span><input class="note" type="text" data-section="safety" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="safety" data-index="3"><span>Μπαταρία / Τάση</span><input class="note" type="text" data-section="safety" data-index="3" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="safety" data-index="4"><span>Σύστημα ABS / ESP</span><input class="note" type="text" data-section="safety" data-index="4" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="safety" data-index="5"><span>Ζώνες ασφαλείας εμπρός / πίσω</span><input class="note" type="text" data-section="safety" data-index="5" placeholder="Ημερομηνία / Σημείωση"></li>
     </ul>
 
     <!-- Εσωτερικό / Άνεση -->
     <h3 class="section-title">Εσωτερικό / Άνεση</h3>
     <ul id="interiorChecks">
-      <li><input type="checkbox"><span>Φίλτρο καμπίνας</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Κλιματισμός - A/C</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Συστήματα ειδοποίησης / σέρβις ενδείξεις</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-      <li><input type="checkbox"><span>Σύστημα infotainment / ηχεία</span><input class="note" type="text" placeholder="Ημερομηνία / Σημείωση"></li>
-    </ul>
-
-    <div class="signature">
-      © 2025 iCar | Service & Maintenance Tracker
-    </div>
-  </div>
-
-  <script>
-    const modelsByBrand = {
-      "Smart": ["Fortwo 450", "Fortwo 451", "Forfour"],
-      "Audi": ["A1", "A3", "A4"],
-      "Toyota": ["Yaris", "Corolla", "C-HR"],
-      "Volkswagen": ["Polo", "Golf", "Tiguan"],
-      "BMW": ["1 Series", "3 Series", "X1"]
-    };
-
-    function updateModels() {
-      const brand = document.getElementById("brand").value;
-      const modelSelect = document.getElementById("model");
-      modelSelect.innerHTML = "";
-      modelsByBrand[brand].forEach(model => {
-        const opt = document.createElement("option");
-        opt.value = model;
-        opt.textContent = model;
-        modelSelect.appendChild(opt);
-      });
-    }
-
-    function saveVehicle() {
-      const brand = document.getElementById("brand").value;
-      const model = document.getElementById("model").value;
-      const year = document.getElementById("year").value;
-      const engine = document.getElementById("engine").value;
-      const carKey = `${brand} ${model} (${year})`;
-
-      let saved = JSON.parse(localStorage.getItem("vehicles")) || {};
-      saved[carKey] = { brand, model, year, engine };
-      localStorage.setItem("vehicles", JSON.stringify(saved));
-
-      renderSavedVehicles();
-      document.getElementById("carDetails").textContent = `${brand} ${model} - ${year} (${engine})`;
-    }
-
-    function renderSavedVehicles() {
-      const container = document.getElementById("savedVehicles");
-      container.innerHTML = "";
-      let saved = JSON.parse(localStorage.getItem("vehicles")) || {};
-      Object.keys(saved).forEach(key => {
-        const btn = document.createElement("button");
-        btn.textContent = key;
-        btn.onclick = () => loadVehicle(saved[key]);
-        container.appendChild(btn);
-      });
-    }
-
-    function loadVehicle(vehicle) {
-      document.getElementById("brand").value = vehicle.brand;
-      updateModels();
-      document.getElementById("model").value = vehicle.model;
-      document.getElementById("year").value = vehicle.year;
-      document.getElementById("engine").value = vehicle.engine;
-      document.getElementById("carDetails").textContent = `${vehicle.brand} ${vehicle.model} - ${vehicle.year} (${vehicle.engine})`;
-    }
-
-    function updateService() {
-      alert("✅ Οι πληροφορίες Service ενημερώθηκαν επιτυχώς!");
-    }
-
-    // Checkbox change -> πράσινο background
-    document.querySelectorAll('li input[type="checkbox"]').forEach(cb => {
-      cb.addEventListener('change', function() {
-        if(this.checked) this.parentElement.classList.add('checked');
-        else this.parentElement.classList.remove('checked');
-      });
-    });
-
-    updateModels();
-    renderSavedVehicles();
-  </script>
-</body>
-</html>
+      <li><input type="checkbox" data-section="interior" data-index="0"><span>Φίλτρο καμπίνας</span><input class="note" type="text" data-section="interior" data-index="0" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="interior" data-index="1"><span>Κλιματισμός - A/C</span><input class="note" type="text" data-section="interior" data-index="1" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li><input type="checkbox" data-section="interior" data-index="2"><span>Συστήματα ειδοποίησης / σέρβις ενδείξεις</span><input class="note" type="text" data-section="interior" data-index="2" placeholder="Ημερομηνία / Σημείωση"></li>
+      <li
