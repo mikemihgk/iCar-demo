@@ -3,49 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🚗 iCar - Login</title>
+<title>🚗 iCar Demo</title>
 <link rel="stylesheet" href="icar.css">
 </head>
 <body>
 
-<div class="login-container" id="loginContainer">
-  <h2>Σύνδεση iCar</h2>
-  <input type="email" id="userEmail" placeholder="Email">
-  <input type="password" id="userPassword" placeholder="Κωδικός">
-  <button id="loginBtn">Σύνδεση / Εγγραφή</button>
+<div class="login-container">
+  <form id="loginForm">
+    <h2>Σύνδεση</h2>
+    <label for="username">Όνομα Χρήστη:</label>
+    <input type="text" id="username" name="username" required>
+    <label for="password">Κωδικός:</label>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">Σύνδεση</button>
+  </form>
 </div>
 
-<div class="container" id="appContainer" style="display:none;">
+<div class="container" id="mainContainer" style="display:none;">
   <header>🚗 iCar Service Manager</header>
 
-  <div class="user-info">
-    Συνδεδεμένος ως: <span id="currentUser"></span>
-    <button id="logoutBtn">Αποσύνδεση</button>
+  <div class="vehicle-section">
+    <h2>Προσθήκη Οχήματος</h2>
+    <select id="brand">
+      <option value="">--Επιλέξτε Μάρκα--</option>
+      <option>Audi</option>
+      <option>BMW</option>
+      <option>Mercedes</option>
+      <option>Smart</option>
+      <option>Toyota</option>
+      <option>Peugeot</option>
+      <option>Honda</option>
+      <option>Yamaha</option>
+      <option>Kawasaki</option>
+    </select>
+
+    <select id="model">
+      <option value="">--Επιλέξτε Μοντέλο--</option>
+    </select>
+
+    <input type="text" id="year" placeholder="Χρονολογία">
+    <button id="saveVehicle">Αποθήκευση Οχήματος</button>
+
+    <h2>Αποθηκευμένα Οχήματα</h2>
+    <div id="vehicleList"></div>
   </div>
 
-  <h2>Προσθήκη Οχήματος</h2>
-  <label>Μάρκα:</label>
-  <select id="brand">
-    <option value="">--Επιλέξτε Μάρκα--</option>
-    <option>Audi</option><option>BMW</option><option>Mercedes</option>
-    <option>Smart</option><option>Toyota</option><option>Peugeot</option>
-  </select>
-
-  <label>Μοντέλο:</label>
-  <select id="model">
-    <option value="">--Επιλέξτε Μοντέλο--</option>
-  </select>
-
-  <label>Χρονολογία:</label>
-  <input type="text" id="year" placeholder="π.χ. 2018">
-
-  <button id="saveVehicle">Αποθήκευση Οχήματος</button>
-
-  <h2>Αποθηκευμένα Οχήματα</h2>
-  <div id="vehicleList"></div>
-
-  <h2>Σημεία Ελέγχου</h2>
-  <div id="serviceList"></div>
+  <div class="service-section">
+    <h2>Σημεία Ελέγχου</h2>
+    <div id="serviceList"></div>
+  </div>
 
   <footer>by MikeMigk</footer>
 </div>
