@@ -7,11 +7,47 @@ const currentUserSpan = document.getElementById("currentUser");
 
 let currentUser = localStorage.getItem("currentUser") || null;
 
+// ---------- VEHICLES & SERVICE SYSTEM ----------
+const brandSelect = document.getElementById("brand");
+const modelSelect = document.getElementById("model");
+const serviceList = document.getElementById("serviceList");
+const vehicleList = document.getElementById("vehicleList");
+
+const modelOptions = {
+  Audi: ["A3","A4","A6","Q2","Q3","Q5"],
+  BMW: ["1 Series","3 Series","5 Series","X1","X3"],
+  Mercedes: ["A-Class","C-Class","E-Class","GLA","GLC"],
+  Smart: ["Fortwo","Forfour","Roadster","Fortwo Cabrio","EQ Fortwo","EQ Forfour"],
+  Toyota: ["Yaris","Corolla","Aygo","C-HR"],
+  Peugeot: ["208","308","3008","2008"],
+  Kawasaki: ["Ninja 400","Z650","Versys 650"],
+  Yamaha: ["MT-07","R1","XSR700"]
+};
+
+const serviceItems = [
+  "Αλλαγή λαδιών", "Φίλτρο λαδιού", "Φίλτρο αέρα", "Φίλτρο καμπίνας",
+  "Φίλτρο βενζίνης", "Υγρά φρένων", "Τακάκια", "Δίσκοι φρένων",
+  "Ελαστικά", "Πίεση αέρα ελαστικών", "Αλλαγή ελαστικών",
+  "Μπαταρία", "Υαλοκαθαριστήρες", "Ψυκτικό υγρό", "Ιμάντας χρονισμού",
+  "Φώτα", "Στάθμη λαδιού", "Κλιματισμός", "Σύστημα διεύθυνσης",
+  "Αμορτισέρ", "Εξάτμιση", "Ανάρτηση", "Διαρροές λαδιού", "Σύστημα πέδησης",
+  "ΚΤΕΟ", "Ασφάλεια"
+];
+
+// Προσθήκη νέων πεδίων
+const extraFields = [
+  {label:"Τύπος λαδιού κινητήρα", id:"oilType"},
+  {label:"Τύπος ελαστικών", id:"tireType"},
+  {label:"Τύπος λαμπών", id:"lampType"}
+];
+
 function updateUIForUser() {
   if(currentUser){
     loginContainer.style.display = "none";
     appContainer.style.display = "block";
     currentUserSpan.textContent = currentUser;
+    loadService();  // φορτώνουμε service μετά το login
+    loadExtraFields(); // extra πεδία
     loadVehicles();
   } else {
     loginContainer.style.display = "block";
@@ -19,6 +55,7 @@ function updateUIForUser() {
   }
 }
 
+// ---------- LOGIN EVENTS ----------
 loginBtn.addEventListener("click", () => {
   const email = document.getElementById("userEmail").value.trim();
   const password = document.getElementById("userPassword").value.trim();
@@ -40,36 +77,7 @@ logoutBtn.addEventListener("click", () => {
   updateUIForUser();
 });
 
-updateUIForUser();
-
-// ---------- VEHICLES & SERVICE SYSTEM ----------
-const brandSelect = document.getElementById("brand");
-const modelSelect = document.getElementById("model");
-const serviceList = document.getElementById("serviceList");
-const vehicleList = document.getElementById("vehicleList");
-
-const modelOptions = {
-  Audi: ["A3","A4","A6","Q2","Q3","Q5"],
-  BMW: ["1 Series","3 Series","5 Series","X1","X3"],
-  Mercedes: ["A-Class","C-Class","E-Class","GLA","GLC"],
-  Smart: ["Fortwo","Forfour","Roadster","Fortwo Cabrio","EQ Fortwo","EQ Forfour"],
-  Toyota: ["Yaris","Corolla","Aygo","C-HR"],
-  Peugeot: ["208","308","3008","2008"],
-  Kawasaki: ["Ninja 400","Z900","Versys 650"], // παράδειγμα μηχανών
-  Yamaha: ["MT-07","R1","XSR700"]
-};
-
-const serviceItems = [
-  "Αλλαγή λαδιών", "Φίλτρο λαδιού", "Φίλτρο αέρα", "Φίλτρο καμπίνας",
-  "Φίλτρο βενζίνης", "Υγρά φρένων", "Τακάκια", "Δίσκοι φρένων",
-  "Ελαστικά", "Πίεση αέρα ελαστικών", "Αλλαγή ελαστικών",
-  "Μπαταρία", "Υαλοκαθαριστήρες", "Ψυκτικό υγρό", "Ιμάντας χρονισμού",
-  "Φώτα", "Στάθμη λαδιού", "Κλιματισμός", "Σύστημα διεύθυνσης",
-  "Αμορτισέρ", "Εξάτμιση", "Ανάρτηση", "Διαρροές λαδιού", "Σύστημα πέδησης",
-  "ΚΤΕΟ", "Ασφάλεια", "Τύπος λαδιού", "Τύπος λάστιχου", "Τύπος λαμπών"
-];
-
-// Φόρτωση μοντέλων
+// ---------- LOAD MODELS ----------
 brandSelect.addEventListener("change", () => {
   const models = modelOptions[brandSelect.value] || [];
   modelSelect.innerHTML = "<option value=''>--Επιλέξτε Μοντέλο--</option>";
@@ -80,7 +88,7 @@ brandSelect.addEventListener("change", () => {
   });
 });
 
-// Φόρτωση service
+// ---------- LOAD SERVICE ----------
 function loadService() {
   serviceList.innerHTML = "";
   serviceItems.forEach(item => {
@@ -93,24 +101,43 @@ function loadService() {
     serviceList.appendChild(div);
   });
 }
-loadService();
 
-// Αποθήκευση οχήματος
+// ---------- LOAD EXTRA FIELDS ----------
+function loadExtraFields(){
+  extraFields.forEach(f=>{
+    if(!document.getElementById(f.id)){
+      const input = document.createElement("input");
+      input.id = f.id;
+      input.placeholder = f.label;
+      input.style.margin = "5px 0"; input.style.width="90%";
+      const container = document.getElementById("appContainer");
+      container.insertBefore(input, container.querySelector("#saveVehicle"));
+    }
+  });
+}
+
+// ---------- SAVE VEHICLE ----------
 document.getElementById("saveVehicle").addEventListener("click", () => {
   if(!currentUser) return alert("Κάντε login πρώτα!");
   const brand = brandSelect.value;
   const model = modelSelect.value;
   const year = document.getElementById("year").value.trim();
   if(!brand || !model || !year) return alert("Συμπληρώστε όλα τα πεδία!");
-  
+
   let vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`) || "{}");
   const key = `${brand} ${model} ${year}`;
-  vehicles[key] = { brand, model, year, services: getCurrentServiceData() };
+  vehicles[key] = { 
+    brand, model, year, 
+    services: getCurrentServiceData(),
+    oilType: document.getElementById("oilType").value || "",
+    tireType: document.getElementById("tireType").value || "",
+    lampType: document.getElementById("lampType").value || ""
+  };
   localStorage.setItem(`vehicles_${currentUser}`, JSON.stringify(vehicles));
   loadVehicles();
 });
 
-// Αποθήκευση service
+// ---------- GET SERVICE DATA ----------
 function getCurrentServiceData(){
   const data = [];
   document.querySelectorAll(".checkbox-item").forEach(item=>{
@@ -121,7 +148,7 @@ function getCurrentServiceData(){
   return data;
 }
 
-// Φόρτωση οχημάτων
+// ---------- LOAD VEHICLES ----------
 function loadVehicles(){
   if(!currentUser) return;
   const vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`)||"{}");
@@ -132,8 +159,8 @@ function loadVehicles(){
     div.className = "vehicle-item";
     div.dataset.key = key;
     div.textContent = `${v.brand} ${v.model} (${v.year})`;
-
-    // Προσθήκη delete button
+    
+    // delete button
     const delBtn = document.createElement("button");
     delBtn.textContent = "❌";
     delBtn.style.marginLeft = "10px";
@@ -146,17 +173,15 @@ function loadVehicles(){
       }
     };
     div.appendChild(delBtn);
-
     div.onclick = () => loadVehicle(key);
     vehicleList.appendChild(div);
   });
 
-  // Επιλογή πρώτου
   const first = vehicleList.querySelector(".vehicle-item");
   if(first){ first.classList.add("active"); loadVehicle(first.dataset.key); }
 }
 
-// Φόρτωση service για όχημα
+// ---------- LOAD VEHICLE ----------
 function loadVehicle(key){
   const vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`)||"{}");
   const v = vehicles[key]; if(!v) return;
@@ -165,6 +190,11 @@ function loadVehicle(key){
   brandSelect.dispatchEvent(new Event("change"));
   document.getElementById("model").value = v.model;
   document.getElementById("year").value = v.year;
+
+  // extra fields
+  document.getElementById("oilType").value = v.oilType || "";
+  document.getElementById("tireType").value = v.tireType || "";
+  document.getElementById("lampType").value = v.lampType || "";
 
   document.querySelectorAll(".vehicle-item").forEach(el=>el.classList.remove("active"));
   vehicleList.querySelector(`[data-key="${key}"]`).classList.add("active");
@@ -183,7 +213,7 @@ function loadVehicle(key){
   });
 }
 
-// Χρωματισμός τσεκ box
+// ---------- SERVICE CHECKBOX EVENTS ----------
 serviceList.addEventListener("change", e=>{
   if(e.target.type==="checkbox"){
     const parent = e.target.closest(".checkbox-item");
@@ -200,3 +230,5 @@ function saveCurrentService(){
   vehicles[key].services = getCurrentServiceData();
   localStorage.setItem(`vehicles_${currentUser}`, JSON.stringify(vehicles));
 }
+
+updateUIForUser();
