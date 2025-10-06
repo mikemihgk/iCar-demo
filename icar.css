@@ -1,137 +1,37 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 14px;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #e3f2fd, #f1f8e9);
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9);
   color: #333;
-}
-
-header {
-  background-color: #2196f3;
-  color: white;
-  text-align: center;
-  padding: 10px 0;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.container {
-  max-width: 900px;
-  margin: 20px auto;
-  background: #fff;
+  margin: 0;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-h2 {
-  color: #1976d2;
-  margin-top: 20px;
-}
-
-select, input[type="text"], button {
-  width: 100%;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-button {
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0d47a1;
-}
-
-.checkbox-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin: 5px 0;
-  transition: background-color 0.3s;
-}
-
-.checkbox-item.checked {
-  background-color: #c8e6c9;
-}
-
-.checkbox-item input[type="text"] {
-  width: 150px;
-  margin-left: 10px;
-}
-
-.vehicle-item {
-  padding: 6px 10px;
-  margin: 4px 0;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.vehicle-item.active {
-  background-color: #d1e7ff;
-}
-
-.vehicle-item .delete-btn {
-  background: #ff5252;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  padding: 2px 6px;
-}
-
-.vehicle-item .delete-btn:hover {
-  background: #ff1744;
-}
-
-footer {
-  text-align: center;
-  margin-top: 20px;
-  color: #666;
 }
 
 .login-container {
-  width: 100%;
   max-width: 400px;
   margin: 50px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.login-container h2 {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
   text-align: center;
-  color: #333;
-}
-
-.login-container label {
-  font-weight: bold;
 }
 
 .login-container input {
-  margin-bottom: 12px;
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 1em;
 }
 
 .login-container button {
-  background-color: #4CAF50;
+  padding: 10px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 8px;
+  background-color: #1976d2;
+  color: white;
+  cursor: pointer;
 }
 
 .login-container button:hover {
-  background-color: #45a049;
-}
+  background-color
