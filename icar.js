@@ -95,24 +95,25 @@ loadService();
 
 // Αποθήκευση οχήματος
 document.getElementById("saveVehicle").addEventListener("click", () => {
-  if (!currentUser) return alert("Κάντε login πρώτα!");
+  if(!currentUser) return alert("Κάντε login πρώτα!");
   const brand = brandSelect.value;
   const model = modelSelect.value;
   const year = document.getElementById("year").value.trim();
-  const oilType = document.getElementById("oilType").value.trim();
-  const tireSize = document.getElementById("tireSize").value.trim();
-  const bulbType = document.getElementById("bulbType").value.trim();
-  if(!brand || !model || !year) return alert("Συμπληρώστε όλα τα πεδία!");
+  const oilType = document.getElementById("oilType") ? document.getElementById("oilType").value.trim() : "";
+  const tiresType = document.getElementById("tiresType") ? document.getElementById("tiresType").value.trim() : "";
+  const lampType = document.getElementById("lampType") ? document.getElementById("lampType").value.trim() : "";
+
+  if(!brand || !model || !year) return alert("Συμπληρώστε όλα τα βασικά πεδία!");
 
   let vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`) || "{}");
   const key = `${brand} ${model} ${year}`;
-  vehicles[key] = { brand, model, year, oilType, tireSize, bulbType, services: getCurrentServiceData() };
+  vehicles[key] = { brand, model, year, oilType, tiresType, lampType, services: getCurrentServiceData() };
   localStorage.setItem(`vehicles_${currentUser}`, JSON.stringify(vehicles));
   loadVehicles();
 });
 
 // Αποθήκευση service
-function getCurrentServiceData() {
+function getCurrentServiceData(){
   const data = [];
   document.querySelectorAll(".checkbox-item").forEach(item=>{
     const checkbox = item.querySelector("input[type='checkbox']");
@@ -123,7 +124,7 @@ function getCurrentServiceData() {
 }
 
 // Φόρτωση οχημάτων
-function loadVehicles() {
+function loadVehicles(){
   if(!currentUser) return;
   const vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`)||"{}");
   vehicleList.innerHTML = "";
@@ -133,8 +134,7 @@ function loadVehicles() {
     div.className = "vehicle-item";
     div.dataset.key = key;
     div.textContent = `${v.brand} ${v.model} (${v.year})`;
-
-    // Προσθήκη delete button
+    
     const delBtn = document.createElement("button");
     delBtn.textContent = "❌";
     delBtn.style.marginLeft = "10px";
@@ -152,7 +152,6 @@ function loadVehicles() {
     vehicleList.appendChild(div);
   });
 
-  // Επιλογή πρώτου
   const first = vehicleList.querySelector(".vehicle-item");
   if(first){ first.classList.add("active"); loadVehicle(first.dataset.key); }
 }
@@ -166,9 +165,9 @@ function loadVehicle(key){
   brandSelect.dispatchEvent(new Event("change"));
   document.getElementById("model").value = v.model;
   document.getElementById("year").value = v.year;
-  document.getElementById("oilType").value = v.oilType || "";
-  document.getElementById("tireSize").value = v.tireSize || "";
-  document.getElementById("bulbType").value = v.bulbType || "";
+  if(document.getElementById("oilType")) document.getElementById("oilType").value = v.oilType || "";
+  if(document.getElementById("tiresType")) document.getElementById("tiresType").value = v.tiresType || "";
+  if(document.getElementById("lampType")) document.getElementById("lampType").value = v.lampType || "";
 
   document.querySelectorAll(".vehicle-item").forEach(el=>el.classList.remove("active"));
   vehicleList.querySelector(`[data-key="${key}"]`).classList.add("active");
@@ -204,3 +203,5 @@ function saveCurrentService(){
   vehicles[key].services = getCurrentServiceData();
   localStorage.setItem(`vehicles_${currentUser}`, JSON.stringify(vehicles));
 }
+
+loadVehicles();
