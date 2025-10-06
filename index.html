@@ -24,31 +24,39 @@
   </div>
 
   <h2>Προσθήκη Οχήματος</h2>
-  <label>Μάρκα:</label>
-  <select id="brand">
-    <option value="">--Επιλέξτε Μάρκα--</option>
-    <option>Audi</option><option>BMW</option><option>Mercedes</option>
-    <option>Smart</option><option>Toyota</option><option>Peugeot</option>
-  </select>
-
-  <label>Μοντέλο:</label>
-  <select id="model">
-    <option value="">--Επιλέξτε Μοντέλο--</option>
-  </select>
-
-  <label>Χρονολογία:</label>
-  <input type="text" id="year" placeholder="π.χ. 2018">
-
-  <label>Τύπος Λαδιού Κινητήρα:</label>
-  <input type="text" id="oilType" placeholder="π.χ. 5W-30">
-
-  <label>Διαστάσεις Ελαστικών:</label>
-  <input type="text" id="tireSize" placeholder="π.χ. 205/55R16">
-
-  <label>Τύπος Λάμπας Φωτισμού:</label>
-  <input type="text" id="bulbType" placeholder="π.χ. H7">
-
-  <button id="saveVehicle">Αποθήκευση Οχήματος</button>
+  <div class="vehicle-form">
+    <div class="form-row">
+      <label>Μάρκα:</label>
+      <select id="brand">
+        <option value="">--Επιλέξτε Μάρκα--</option>
+        <option>Audi</option><option>BMW</option><option>Mercedes</option>
+        <option>Smart</option><option>Toyota</option><option>Peugeot</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Μοντέλο:</label>
+      <select id="model">
+        <option value="">--Επιλέξτε Μοντέλο--</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Χρονολογία:</label>
+      <input type="text" id="year" placeholder="π.χ. 2018">
+    </div>
+    <div class="form-row">
+      <label>Τύπος Λαδιού:</label>
+      <input type="text" id="oilType" placeholder="π.χ. 5W-30">
+    </div>
+    <div class="form-row">
+      <label>Λάστιχα:</label>
+      <input type="text" id="tiresType" placeholder="π.χ. 205/55 R16">
+    </div>
+    <div class="form-row">
+      <label>Τύπος Λαμπών:</label>
+      <input type="text" id="lampType" placeholder="π.χ. H7, LED">
+    </div>
+    <button id="saveVehicle">Αποθήκευση Οχήματος</button>
+  </div>
 
   <h2>Αποθηκευμένα Οχήματα</h2>
   <div id="vehicleList"></div>
