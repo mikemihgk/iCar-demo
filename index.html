@@ -3,249 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🚗 iCar Cloud</title>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
-
-<style>
-body {
-  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9);
-  color: #333; margin:0; padding:0; min-height:100vh;
-}
-header { background:#1976d2; color:white; text-align:center; padding:15px; font-size:24px; font-weight:bold; }
-.container { max-width:800px; margin:20px auto; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-h2{color:#1976d2;margin-top:20px;}
-select,input[type="text"],button{display:block;width:100%;margin:10px 0;padding:8px;font-size:16px;}
-select,input[type="text"]{border:1px solid #ccc;border-radius:6px;}
-button{background:#1976d2;color:white;border:none;border-radius:6px;cursor:pointer;}
-button:hover{background:#0d47a1;}
-.checkbox-item{display:flex;align-items:center;justify-content:space-between;border:1px solid #ddd;padding:8px;border-radius:8px;margin:5px 0;transition:0.3s;}
-.checkbox-item.checked{background:#c8e6c9;}
-.checkbox-item input[type="text"]{width:150px;margin-left:10px;}
-.vehicle-item{padding:8px;border:1px solid #ccc;margin:5px 0;border-radius:6px;cursor:pointer;}
-.vehicle-item.active{background:#bbdefb;}
-.delete-btn{color:red;font-weight:bold;margin-left:10px;cursor:pointer;}
-footer{text-align:center;margin-top:20px;color:#666;}
-</style>
+<title>🚗 iCar - Login</title>
+<link rel="stylesheet" href="icar.css">
 </head>
 <body>
 
-<header>🚗 iCar Cloud</header>
-
-<div class="container">
-<button id="loginBtn">Σύνδεση με Google</button>
-<div id="userInfo" style="display:none;">Συνδεδεμένος: <span id="userName"></span> <button id="logoutBtn">Αποσύνδεση</button></div>
-
-<h2>Προσθήκη Οχήματος</h2>
-<label>Μάρκα:</label>
-<select id="brand"><option value="">--Επιλέξτε Μάρκα--</option></select>
-<label>Μοντέλο:</label>
-<select id="model"><option value="">--Επιλέξτε Μοντέλο--</option></select>
-<label>Χρονολογία:</label>
-<input type="text" id="year" placeholder="π.χ. 2018">
-<button id="saveVehicle">Αποθήκευση Οχήματος</button>
-
-<h2>Αποθηκευμένα Οχήματα</h2>
-<div id="vehicleList"></div>
-
-<h2>Σημεία Ελέγχου</h2>
-<div id="serviceList"></div>
+<div class="login-container" id="loginContainer">
+  <h2>Σύνδεση iCar</h2>
+  <input type="email" id="userEmail" placeholder="Email">
+  <input type="password" id="userPassword" placeholder="Κωδικός">
+  <button id="loginBtn">Σύνδεση / Εγγραφή</button>
 </div>
 
-<footer>by MikeMigk</footer>
+<div class="container" id="appContainer" style="display:none;">
+  <header>🚗 iCar Service Manager</header>
 
-<script>
-// ====== Firebase Config ======
-// Βάλε τα δικά σου keys
-const firebaseConfig = {
-  apiKey: "API_KEY",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+  <div class="user-info">
+    Συνδεδεμένος ως: <span id="currentUser"></span>
+    <button id="logoutBtn">Αποσύνδεση</button>
+  </div>
 
-// ====== Μάρκες & Μοντέλα ======
-const modelOptions = {
-  Audi:["A3","A4","A6","Q2","Q3","Q5"],
-  BMW:["1 Series","3 Series","5 Series","X1","X3"],
-  Mercedes:["A-Class","C-Class","E-Class","GLA","GLC"],
-  Smart:["Fortwo","Forfour","Roadster","Fortwo Cabrio","EQ Fortwo","EQ Forfour"],
-  Toyota:["Yaris","Corolla","Aygo","C-HR"],
-  Peugeot:["208","308","3008","2008"],
-  Honda:["Civic","Jazz","CR-V"],
-  Kawasaki:["Ninja","Z650","Versys"],
-  Yamaha:["MT-07","R1","XSR700"]
-};
-const serviceItems = [
-"Αλλαγή λαδιών","Φίλτρο λαδιού","Φίλτρο αέρα","Φίλτρο καμπίνας","Φίλτρο βενζίνης",
-"Υγρά φρένων","Τακάκια","Δίσκοι φρένων","Ελαστικά","Πίεση αέρα ελαστικών","Αλλαγή ελαστικών",
-"Μπαταρία","Υαλοκαθαριστήρες","Ψυκτικό υγρό","Ιμάντας χρονισμού","Φώτα",
-"Στάθμη λαδιού","Κλιματισμός","Σύστημα διεύθυνσης","Αμορτισέρ","Εξάτμιση","Ανάρτηση",
-"Διαρροές λαδιού","Σύστημα πέδησης","ΚΤΕΟ","Ασφάλεια"
-];
+  <h2>Προσθήκη Οχήματος</h2>
+  <label>Μάρκα:</label>
+  <select id="brand">
+    <option value="">--Επιλέξτε Μάρκα--</option>
+    <option>Audi</option><option>BMW</option><option>Mercedes</option>
+    <option>Smart</option><option>Toyota</option><option>Peugeot</option>
+  </select>
 
-// ====== DOM Elements ======
-const brandSelect = document.getElementById("brand");
-const modelSelect = document.getElementById("model");
-const serviceListDiv = document.getElementById("serviceList");
-const vehicleListDiv = document.getElementById("vehicleList");
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const userInfoDiv = document.getElementById("userInfo");
-const userNameSpan = document.getElementById("userName");
+  <label>Μοντέλο:</label>
+  <select id="model">
+    <option value="">--Επιλέξτε Μοντέλο--</option>
+  </select>
 
-// ====== Populate brands ======
-Object.keys(modelOptions).forEach(brand=>{
-  const opt = document.createElement("option"); opt.value=brand; opt.textContent=brand; brandSelect.appendChild(opt);
-});
+  <label>Χρονολογία:</label>
+  <input type="text" id="year" placeholder="π.χ. 2018">
 
-// ====== Update models ======
-brandSelect.addEventListener("change",()=>{
-  const models = modelOptions[brandSelect.value] || [];
-  modelSelect.innerHTML = "<option value=''>--Επιλέξτε Μοντέλο--</option>";
-  models.forEach(m=>{
-    const opt=document.createElement("option"); opt.value=m; opt.textContent=m; modelSelect.appendChild(opt);
-  });
-});
+  <button id="saveVehicle">Αποθήκευση Οχήματος</button>
 
-// ====== Load service checkboxes ======
-function loadService(){
-  serviceListDiv.innerHTML="";
-  serviceItems.forEach(item=>{
-    const div=document.createElement("div");
-    div.className="checkbox-item";
-    div.innerHTML=`<label><input type="checkbox"> ${item}</label><input type="text" placeholder="Ημερομηνία/Σχόλιο">`;
-    serviceListDiv.appendChild(div);
-  });
-}
-loadService();
+  <h2>Αποθηκευμένα Οχήματα</h2>
+  <div id="vehicleList"></div>
 
-// ====== Login/Logout ======
-loginBtn.onclick = ()=>{
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
-};
-logoutBtn.onclick = ()=> auth.signOut();
+  <h2>Σημεία Ελέγχου</h2>
+  <div id="serviceList"></div>
 
-// ====== Auth state ======
-let currentUser=null;
-auth.onAuthStateChanged(user=>{
-  if(user){
-    currentUser = user;
-    loginBtn.style.display="none";
-    userInfoDiv.style.display="block";
-    userNameSpan.textContent=user.displayName;
-    loadUserVehicles();
-  } else {
-    currentUser=null;
-    loginBtn.style.display="block";
-    userInfoDiv.style.display="none";
-    vehicleListDiv.innerHTML="";
-    serviceListDiv.innerHTML="";
-  }
-});
+  <footer>by MikeMigk</footer>
+</div>
 
-// ====== Save vehicle ======
-document.getElementById("saveVehicle").addEventListener("click",()=>{
-  if(!currentUser){alert("Σύνδεση απαιτείται!"); return;}
-  const brand = brandSelect.value;
-  const model = modelSelect.value;
-  const year = document.getElementById("year").value.trim();
-  if(!brand||!model||!year){alert("Συμπληρώστε όλα τα πεδία!");return;}
-  const key = `${brand} ${model} ${year}`;
-  const services = getCurrentServiceData();
-  db.collection("users").doc(currentUser.uid).collection("vehicles").doc(key).set({brand,model,year,services})
-  .then(()=>loadUserVehicles());
-});
-
-// ====== Get current service data ======
-function getCurrentServiceData(){
-  const data=[];
-  document.querySelectorAll(".checkbox-item").forEach(item=>{
-    const cb=item.querySelector("input[type='checkbox']");
-    const note=item.querySelector("input[type='text']").value;
-    data.push({name:item.innerText.trim(),checked:cb.checked,note});
-  });
-  return data;
-}
-
-// ====== Load user's vehicles ======
-function loadUserVehicles(){
-  vehicleListDiv.innerHTML="";
-  if(!currentUser) return;
-  db.collection("users").doc(currentUser.uid).collection("vehicles").get()
-  .then(snapshot=>{
-    snapshot.forEach(doc=>{
-      const v=doc.data();
-      const div=document.createElement("div");
-      div.className="vehicle-item"; div.dataset.key=doc.id;
-      div.textContent=`${v.brand} ${v.model} (${v.year})`;
-      const del=document.createElement("span"); del.textContent="✖"; del.className="delete-btn";
-      del.onclick=(e)=>{
-        e.stopPropagation();
-        if(confirm("Θέλετε να διαγράψετε το όχημα;")){
-          db.collection("users").doc(currentUser.uid).collection("vehicles").doc(doc.id).delete()
-          .then(()=>loadUserVehicles());
-        }
-      };
-      div.appendChild(del);
-      div.onclick=()=> loadVehicleData(v,doc.id);
-      vehicleListDiv.appendChild(div);
-    });
-    const first = vehicleListDiv.querySelector(".vehicle-item");
-    if(first) first.click();
-  });
-}
-
-// ====== Load vehicle data to form ======
-function loadVehicleData(vehicle,key){
-  document.getElementById("brand").value=vehicle.brand; brandSelect.dispatchEvent(new Event("change"));
-  document.getElementById("model").value=vehicle.model;
-  document.getElementById("year").value=vehicle.year;
-  document.querySelectorAll(".vehicle-item").forEach(el=>el.classList.remove("active"));
-  vehicleListDiv.querySelector(`[data-key="${key}"]`).classList.add("active");
-  document.querySelectorAll(".checkbox-item").forEach((item,i)=>{
-    const cb=item.querySelector("input[type='checkbox']");
-    const note=item.querySelector("input[type='text']");
-    if(vehicle.services[i]){
-      cb.checked=vehicle.services[i].checked;
-      note.value=vehicle.services[i].note;
-      item.classList.toggle("checked",cb.checked);
-    } else {cb.checked=false; note.value=""; item.classList.remove("checked");}
-  });
-}
-
-// ====== Checkbox toggle ======
-serviceListDiv.addEventListener("change",e=>{
-  if(e.target.type==="checkbox") toggleService(e.target);
-});
-
-function toggleService(cb){
-  const parent=cb.closest(".checkbox-item");
-  parent.classList.toggle("checked",cb.checked);
-  saveCurrentVehicleService();
-}
-
-function saveCurrentVehicleService(){
-  const active = vehicleListDiv.querySelector(".vehicle-item.active");
-  if(!active) return;
-  const key = active.dataset.key;
-  const brand=document.getElementById("brand").value;
-  const model=document.getElementById("model").value;
-  const year=document.getElementById("year").value.trim();
-  const services=getCurrentServiceData();
-  db.collection("users").doc(currentUser.uid).collection("vehicles").doc(key).set({brand,model,year,services})
-}
-</script>
-
+<script src="icar.js"></script>
 </body>
 </html>
