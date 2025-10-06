@@ -24,7 +24,6 @@ loginBtn.addEventListener("click", () => {
   const password = document.getElementById("userPassword").value.trim();
   if(!email || !password){ alert("Συμπληρώστε email και κωδικό!"); return; }
 
-  // Απλή αποθήκευση χρήστη στο localStorage
   let users = JSON.parse(localStorage.getItem("users")||"{}");
   if(!users[email]) users[email] = { password };
   else if(users[email].password !== password){ alert("Λάθος κωδικός!"); return; }
@@ -55,7 +54,10 @@ const modelOptions = {
   Mercedes: ["A-Class","C-Class","E-Class","GLA","GLC"],
   Smart: ["Fortwo","Forfour","Roadster","Fortwo Cabrio","EQ Fortwo","EQ Forfour"],
   Toyota: ["Yaris","Corolla","Aygo","C-HR"],
-  Peugeot: ["208","308","3008","2008"]
+  Peugeot: ["208","308","3008","2008"],
+  Yamaha: ["R1","MT-07","MT-09"],
+  Honda: ["CBR500R","CB500X","NC750X"],
+  Kawasaki: ["Ninja 400","Z650","Z900"]
 };
 
 const serviceItems = [
@@ -100,11 +102,14 @@ document.getElementById("saveVehicle").addEventListener("click", () => {
   const brand = brandSelect.value;
   const model = modelSelect.value;
   const year = document.getElementById("year").value.trim();
+  const oil = document.getElementById("oilType").value.trim();
+  const tires = document.getElementById("tiresType").value.trim();
+  const lights = document.getElementById("lightsType").value.trim();
   if(!brand || !model || !year) return alert("Συμπληρώστε όλα τα πεδία!");
-  
+
   let vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`) || "{}");
   const key = `${brand} ${model} ${year}`;
-  vehicles[key] = { brand, model, year, services: getCurrentServiceData() };
+  vehicles[key] = { brand, model, year, oil, tires, lights, services: getCurrentServiceData() };
   localStorage.setItem(`vehicles_${currentUser}`, JSON.stringify(vehicles));
   loadVehicles();
 });
@@ -130,71 +135,11 @@ function loadVehicles(){
     const div = document.createElement("div");
     div.className = "vehicle-item";
     div.dataset.key = key;
-    div.textContent = `${v.brand} ${v.model} (${v.year})`;
-    // Προσθήκη delete button
+    div.innerHTML = `<span>${v.brand} ${v.model} (${v.year})</span>`;
+    
     const delBtn = document.createElement("button");
     delBtn.textContent = "❌";
-    delBtn.style.marginLeft = "10px";
+    delBtn.className = "deleteBtn";
     delBtn.onclick = e=>{
       e.stopPropagation();
       if(confirm("Διαγραφή οχήματος;")){
-        delete vehicles[key];
-        localStorage.setItem(`vehicles_${currentUser}`, JSON.stringify(vehicles));
-        loadVehicles();
-      }
-    };
-    div.appendChild(delBtn);
-
-    div.onclick = () => loadVehicle(key);
-    vehicleList.appendChild(div);
-  });
-
-  // Επιλογή πρώτου
-  const first = vehicleList.querySelector(".vehicle-item");
-  if(first){ first.classList.add("active"); loadVehicle(first.dataset.key); }
-}
-
-// Φόρτωση service για όχημα
-function loadVehicle(key){
-  const vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`)||"{}");
-  const v = vehicles[key]; if(!v) return;
-
-  document.getElementById("brand").value = v.brand;
-  brandSelect.dispatchEvent(new Event("change"));
-  document.getElementById("model").value = v.model;
-  document.getElementById("year").value = v.year;
-
-  document.querySelectorAll(".vehicle-item").forEach(el=>el.classList.remove("active"));
-  vehicleList.querySelector(`[data-key="${key}"]`).classList.add("active");
-
-  document.querySelectorAll(".checkbox-item").forEach((item,i)=>{
-    const checkbox = item.querySelector("input[type='checkbox']");
-    const note = item.querySelector("input[type='text']");
-    if(v.services[i]){
-      checkbox.checked = v.services[i].checked;
-      note.value = v.services[i].note;
-      item.classList.toggle("checked", checkbox.checked);
-    } else {
-      checkbox.checked = false; note.value="";
-      item.classList.remove("checked");
-    }
-  });
-}
-
-// Χρωματισμός τσεκ box
-serviceList.addEventListener("change", e=>{
-  if(e.target.type==="checkbox"){
-    const parent = e.target.closest(".checkbox-item");
-    parent.classList.toggle("checked", e.target.checked);
-    saveCurrentService();
-  }
-});
-
-function saveCurrentService(){
-  const activeVehicle = vehicleList.querySelector(".vehicle-item.active");
-  if(!activeVehicle) return;
-  const key = activeVehicle.dataset.key;
-  let vehicles = JSON.parse(localStorage.getItem(`vehicles_${currentUser}`)||"{}");
-  vehicles[key].services = getCurrentServiceData();
-  localStorage.setItem(`vehicles_${currentUser}`, JSON.stringify(vehicles));
-}
