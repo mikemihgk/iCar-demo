@@ -21,7 +21,7 @@ const modelOptions = {
   Toyota: ["Yaris","Corolla","Aygo","C-HR"],
   Peugeot: ["208","308","3008","2008"],
   Kawasaki: ["Ninja 400","Z650","Versys 650"],
-  Yamaha: ["MT-07","R1","XSR700"]
+  Yamaha: ["MT-07","R1","XSR700"],
   Piaggio: ["Beverly 350", "Beverly 300", "MP3 500", "Liberty 150"]
 };
 
