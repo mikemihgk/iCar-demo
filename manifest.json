@@ -1,0 +1,21 @@
+{
+  "name": "iCar Service Manager",
+  "short_name": "iCar",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#bbdefb",
+  "theme_color": "#1976d2",
+  "description": "Διαχείριση οχημάτων και service από το κινητό σου.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
